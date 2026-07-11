@@ -20,7 +20,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="header-actions"><button class="header-btn" id="theme-btn"> حالت تاریک</button></div>
+        <div class="header-actions"><button class="header-btn" id="theme-btn">🌙 حالت تاریک</button></div>
         <header><h1>کافه متانویا</h1><p>نوری در دل تاریکی</p></header>
         <div class="qr-section"><p> ما رو به دوستان خود معرفی کنید</p><div id="qrcode"></div></div>
         <input type="text" id="search-bar" class="search-input" placeholder="جستجوی عنوان محصول در کافه متانویا...">
@@ -79,7 +79,7 @@
         themeBtn.onclick = () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
-            themeBtn.textContent = isDark ? ' حالت تاریک' : ' حالت روشن';
+            themeBtn.textContent = isDark ? ' حالت تاریک' : '☀️ حالت روشن 🌙';
         };
 
         // Render the menu immediately — it must never depend on the QR script.
