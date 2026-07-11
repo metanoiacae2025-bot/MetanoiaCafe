@@ -1,0 +1,17 @@
+{
+  "name": "کافه آذربایجان",
+  "short_name": "منو آذربایجان",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#12312f",
+  "theme_color": "#12312f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ]
+}

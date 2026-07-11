@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مدیریت منو — کافه آذربایجان</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="products.js"></script>
+<style>
+  body { max-width: 900px; margin: 0 auto; padding: 20px 15px 80px; }
+  .admin-header { text-align: center; margin-bottom: 24px; }
+  .admin-header h1 { font-family: 'Lalezar', 'Vazirmatn', sans-serif; color: var(--primary); font-size: 1.8rem; margin: 0 0 6px; }
+  .admin-header p { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
+  .lock-screen { max-width: 340px; margin: 80px auto; text-align: center; }
+  .lock-screen input { width: 100%; margin: 14px 0; }
+  .lock-screen button, .admin-actions button, .cat-actions button, .prod-actions button {
+    background: linear-gradient(100deg, var(--teal), var(--pomegranate));
+    color: #fdfbf6; border: none; border-radius: 30px; padding: 10px 22px;
+    font-family: inherit; font-size: 0.9rem; cursor: pointer;
+  }
+  .cat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 22px; box-shadow: 0 4px 12px var(--shadow); }
+  .cat-top-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .cat-top-row input[type=text] { flex: 1; min-width: 140px; }
+  .field-label { font-size: 0.72rem; color: var(--text-muted); display: block; margin: 8px 0 3px; }
+  input[type=text], input[type=password] {
+    width: 100%; padding: 9px 14px; border: 1px solid var(--border); border-radius: 10px;
+    background: var(--bg); color: var(--text); font-family: inherit; font-size: 0.88rem; outline: none;
+  }
+  input:focus { border-color: var(--teal); }
+  .prod-row { border-top: 1px dashed var(--border); padding: 12px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .prod-row .full { grid-column: 1 / -1; }
+  .prod-actions, .cat-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 10px; }
+  .btn-secondary { background: var(--card) !important; color: var(--text) !important; border: 1px solid var(--border) !important; }
+  .btn-danger { background: var(--pomegranate) !important; color: #fff !important; }
+  .admin-actions { position: sticky; bottom: 0; background: var(--bg); padding: 14px 0; display: flex; gap: 10px; justify-content: center; border-top: 1px solid var(--border); }
+  .hint { background: var(--badge-bg); color: var(--badge-text); border-radius: 12px; padding: 12px 16px; font-size: 0.8rem; margin-bottom: 20px; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<div id="lock" class="lock-screen">
+  <h2 style="font-family:'Lalezar','Vazirmatn',sans-serif;color:var(--primary)">ورود به بخش مدیریت</h2>
+  <input type="password" id="pw" placeholder="رمز عبور">
+  <button onclick="tryUnlock()">ورود</button>
+  <p style="font-size:0.75rem;color:var(--text-muted);margin-top:16px">
+    این قفل فقط برای جلوگیری از دسترسی تصادفی مشتری‌هاست، نه یک لایه‌ی امنیتی واقعی
+    (چون این صفحه کاملاً سمت مرورگر اجرا می‌شود). رمز را در همین فایل، خط مشخص‌شده، عوض کنید.
+  </p>
+</div>
+
+<div id="panel" style="display:none">
+  <div class="admin-header">
+    <h1>🛠 مدیریت منو</h1>
+    <p>دسته‌ها، محصولات، قیمت‌ها و عکس‌ها را ویرایش کنید، سپس فایل به‌روزشده را دانلود و در گیت‌هاب جایگزین کنید</p>
+  </div>
+
+  <div class="hint">
+    ۱) مسیر عکس‌ها را نسبی و دقیقاً هم‌نام با فایل داخل پوشه‌ی <code>images/</code> بنویسید، مثل: <code>images/latte.jpg</code><br>
+    ۲) بعد از ویرایش، دکمه‌ی «دانلود products.js» را بزنید و فایل دانلودشده را در گیت‌هاب جای فایل قبلی بگذارید.
+  </div>
+
+  <div id="categories"></div>
+
+  <div style="text-align:center;margin-bottom:20px">
+    <button onclick="addCategory()">+ افزودن دسته‌بندی جدید</button>
+  </div>
+</div>
+
+<div class="admin-actions" id="bottom-bar" style="display:none">
+  <button onclick="downloadData()">⬇ دانلود products.js</button>
+  <button class="btn-secondary" onclick="location.reload()">↺ بازنشانی تغییرات</button>
+</div>
+
+<script>
+  // برای تغییر رمز، همین مقدار را عوض کنید:
+  const ADMIN_PASSWORD = "1234";
+
+  function tryUnlock() {
+    const val = document.getElementById('pw').value;
+    if (val === ADMIN_PASSWORD) {
+      document.getElementById('lock').style.display = 'none';
+      document.getElementById('panel').style.display = 'block';
+      document.getElementById('bottom-bar').style.display = 'flex';
+      renderAdmin();
+    } else {
+      alert('رمز اشتباه است');
+    }
+  }
+  document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') tryUnlock(); });
+
+  // Deep copy of the currently loaded menu data so edits don't mutate the original until export
+  let data = JSON.parse(JSON.stringify(window.menuData || []));
+
+  function renderAdmin() {
+    const wrap = document.getElementById('categories');
+    wrap.innerHTML = '';
+    data.forEach((cat, ci) => {
+      const card = document.createElement('div');
+      card.className = 'cat-card';
+
+      const top = document.createElement('div');
+      top.className = 'cat-top-row';
+      top.innerHTML = `
+        <input type="text" value="${escapeAttr(cat.category)}" placeholder="نام دسته‌بندی" oninput="data[${ci}].category=this.value">
+      `;
+      card.appendChild(top);
+
+      const imgLabel = document.createElement('label');
+      imgLabel.className = 'field-label';
+      imgLabel.textContent = 'مسیر عکس دسته‌بندی (بنر)';
+      card.appendChild(imgLabel);
+      const imgInput = document.createElement('input');
+      imgInput.type = 'text';
+      imgInput.value = cat.image || '';
+      imgInput.placeholder = 'images/example.jpg';
+      imgInput.oninput = () => { data[ci].image = imgInput.value; };
+      card.appendChild(imgInput);
+
+      const prodsWrap = document.createElement('div');
+      prodsWrap.id = `prods-${ci}`;
+      cat.products.forEach((p, pi) => prodsWrap.appendChild(renderProductRow(ci, pi)));
+      card.appendChild(prodsWrap);
+
+      const catActions = document.createElement('div');
+      catActions.className = 'cat-actions';
+      catActions.innerHTML = `
+        <button class="btn-secondary" onclick="addProduct(${ci})">+ محصول جدید</button>
+        <button class="btn-danger" onclick="removeCategory(${ci})">حذف این دسته‌بندی</button>
+      `;
+      card.appendChild(catActions);
+
+      wrap.appendChild(card);
+    });
+  }
+
+  function renderProductRow(ci, pi) {
+    const p = data[ci].products[pi];
+    const row = document.createElement('div');
+    row.className = 'prod-row';
+    row.innerHTML = `
+      <div>
+        <label class="field-label">نام محصول</label>
+        <input type="text" value="${escapeAttr(p.name)}" oninput="data[${ci}].products[${pi}].name=this.value">
+      </div>
+      <div>
+        <label class="field-label">قیمت</label>
+        <input type="text" value="${escapeAttr(p.price || '')}" oninput="data[${ci}].products[${pi}].price=this.value">
+      </div>
+      <div class="full">
+        <label class="field-label">زیرعنوان (اختیاری)</label>
+        <input type="text" value="${escapeAttr(p.subtitle || '')}" oninput="data[${ci}].products[${pi}].subtitle=this.value">
+      </div>
+      <div>
+        <label class="field-label">برچسب‌ها (با ویرگول جدا کنید)</label>
+        <input type="text" value="${escapeAttr((p.tags||[]).join('، '))}" oninput="data[${ci}].products[${pi}].tags=this.value.split(/[،,]/).map(s=>s.trim()).filter(Boolean)">
+      </div>
+      <div>
+        <label class="field-label">مسیر عکس محصول (اختیاری)</label>
+        <input type="text" value="${escapeAttr(p.image || '')}" placeholder="images/example.jpg" oninput="data[${ci}].products[${pi}].image=this.value">
+      </div>
+      <div class="full prod-actions">
+        <button class="btn-danger" onclick="removeProduct(${ci},${pi})">حذف محصول</button>
+      </div>
+    `;
+    return row;
+  }
+
+  function escapeAttr(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function addCategory() {
+    data.push({ category: 'دسته‌بندی جدید', image: '', products: [] });
+    renderAdmin();
+  }
+  function removeCategory(ci) {
+    if (confirm('این دسته‌بندی و تمام محصولاتش حذف شود؟')) { data.splice(ci, 1); renderAdmin(); }
+  }
+  function addProduct(ci) {
+    data[ci].products.push({ name: 'محصول جدید', price: '۰', subtitle: '', tags: [], image: '' });
+    renderAdmin();
+  }
+  function removeProduct(ci, pi) {
+    if (confirm('این محصول حذف شود؟')) { data[ci].products.splice(pi, 1); renderAdmin(); }
+  }
+
+  function downloadData() {
+    const content = 'window.menuData = ' + JSON.stringify(data, null, 2) + ';\n';
+    const blob = new Blob([content], { type: 'text/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'products.js';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
