@@ -79,7 +79,7 @@
         themeBtn.onclick = () => {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
-            themeBtn.textContent = isDark ? '☀️ حالت روشن' : '🌙 حالت تاریک';
+            themeBtn.textContent = isDark ? '🌙 حالت تاریک' : '☀️ حالت روشن' ;
         };
 
         // Render the menu immediately — it must never depend on the QR script.
