@@ -1,106 +1,105 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منوی کافه متانویا</title>
-    <meta name="description" content="منوی دیجیتال کافه متانویا— اسپرسو، نوشیدنی گرم و سرد، دمنوش و چای">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <meta name="theme-color" content="#12312f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منوی کافه متانویا</title>
+    <meta name="description" content="منوی دیجیتال کافه متانویا— اسپرسو، نوشیدنی گرم و سرد، دمنوش و چای">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#12312f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="style.css">
 
-    <!-- External structured inventory data -->
-    <script src="products.js"></script>
+    <!-- External structured inventory data -->
+    <script src="products.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header-actions"><button class="header-btn" id="theme-btn">🌙 حالت تاریک</button></div>
-        <header><h1>کافه متانویا</h1><p>نوری در دل تاریکی</p></header>
-        <div class="qr-section"><p>📱 ما رو به دوستان خود معرفی کنید</p><div id="qrcode"></div></div>
-        <input type="text" id="search-bar" class="search-input" placeholder="جستجوی عنوان محصول در کافه متانویا...">
-        <div class="filters-container" id="filters-wrapper"></div>
-        <main id="cafe-menu"></main>
-    </div>
-    <script>
-        let activeCategory = "همه", searchQuery = "";
-        const menuContainer = document.getElementById('cafe-menu'), filtersWrapper = document.getElementById('filters-wrapper'), searchBar = document.getElementById('search-bar'), themeBtn = document.getElementById('theme-btn');
+    <div class="container">
+        <div class="header-actions"><button class="header-btn" id="theme-btn"> حالت تاریک</button></div>
+        <header><h1>کافه متانویا</h1><p>نوری در دل تاریکی</p></header>
+        <div class="qr-section"><p> ما رو به دوستان خود معرفی کنید</p><div id="qrcode"></div></div>
+        <input type="text" id="search-bar" class="search-input" placeholder="جستجوی عنوان محصول در کافه متانویا...">
+        <div class="filters-container" id="filters-wrapper"></div>
+        <main id="cafe-menu"></main>
+    </div>
+    <script>
+        let activeCategory = "همه", searchQuery = "";
+        const menuContainer = document.getElementById('cafe-menu'), filtersWrapper = document.getElementById('filters-wrapper'), searchBar = document.getElementById('search-bar'), themeBtn = document.getElementById('theme-btn');
 
-        function normalize(str) {
-            return (str || '').replace(/ي/g, 'ی').replace(/ك/g, 'ک').toLowerCase();
-        }
+        function normalize(str) {
+            return (str || '').replace(/ي/g, 'ی').replace(/ك/g, 'ک').toLowerCase();
+        }function toPersianDigits(str) {    const en = "0123456789";    const fa = "۰۱۲۳۴۵۶۷۸۹";    return String(str).replace(/[0-9]/g, d => fa[en.indexOf(d)]);}
+        function renderFilters() {
+            filtersWrapper.innerHTML = '';
+            if (!window.menuData) return;
+            ["همه", ...window.menuData.map(g => g.category)].forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `filter-btn ${activeCategory === cat ? 'active' : ''}`;
+                btn.textContent = cat;
+                btn.onclick = () => { activeCategory = cat; updateUI(); };
+                filtersWrapper.appendChild(btn);
+            });
+        }
 
-        function renderFilters() {
-            filtersWrapper.innerHTML = '';
-            if (!window.menuData) return;
-            ["همه", ...window.menuData.map(g => g.category)].forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = `filter-btn ${activeCategory === cat ? 'active' : ''}`;
-                btn.textContent = cat;
-                btn.onclick = () => { activeCategory = cat; updateUI(); };
-                filtersWrapper.appendChild(btn);
-            });
-        }
+        function renderMenu() {
+            menuContainer.innerHTML = ''; let hasItems = false;
+            if (!window.menuData) return;
+            const q = normalize(searchQuery);
+            window.menuData.forEach(group => {
+                if (activeCategory !== "همه" && group.category !== activeCategory) return;
+                const filtered = group.products.filter(p => normalize(p.name).includes(q) || (p.subtitle && normalize(p.subtitle).includes(q)));
+                if (filtered.length > 0) {
+                    hasItems = true;
+                    const section = document.createElement('section');
+                    section.className = 'category-section';
+                    let bannerHtml = group.image ? `<div class="category-banner" style="background-image:url('${group.image}')"></div>` : '';
+                    section.innerHTML = `${bannerHtml}<h2 class="category-title">${group.category}</h2>`;
+                    const grid = document.createElement('div');
+                    grid.className = 'products-grid';
 
-        function renderMenu() {
-            menuContainer.innerHTML = ''; let hasItems = false;
-            if (!window.menuData) return;
-            const q = normalize(searchQuery);
-            window.menuData.forEach(group => {
-                if (activeCategory !== "همه" && group.category !== activeCategory) return;
-                const filtered = group.products.filter(p => normalize(p.name).includes(q) || (p.subtitle && normalize(p.subtitle).includes(q)));
-                if (filtered.length > 0) {
-                    hasItems = true;
-                    const section = document.createElement('section');
-                    section.className = 'category-section';
-                    let bannerHtml = group.image ? `<div class="category-banner" style="background-image:url('${group.image}')"></div>` : '';
-                    section.innerHTML = `${bannerHtml}<h2 class="category-title">${group.category}</h2>`;
-                    const grid = document.createElement('div');
-                    grid.className = 'products-grid';
+                    filtered.forEach(p => {
+                        let tagsHtml = p.tags && p.tags.length > 0 ? `<div class="badge-row">${p.tags.map(t => `<span class="micro-badge">${t}</span>`).join('')}</div>` : '';
+                        let subHtml = p.subtitle ? `<span class="product-sub">${p.subtitle}</span>` : '';
+                        let thumbHtml = p.image ? `<div class="product-thumb-wrap"><img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.parentElement.remove()"></div>` : '';
+                        grid.innerHTML += `<div class="product-card">${thumbHtml}<div class="product-body"><div><div class="product-main-row"><h3 class="product-name">${p.name}</h3><div class="product-leader-dots"></div><span class="product-price">${toPersianDigits(p.price)} تومان</span></div>${subHtml}</div>${tagsHtml}</div></div>`;
+                    });
+                    section.appendChild(grid); menuContainer.appendChild(section);
+                }
+            });
+            if (!hasItems) menuContainer.innerHTML = `<div class="no-results">محصولی یافت نشد.</div>`;
+        }
 
-                    filtered.forEach(p => {
-                        let tagsHtml = p.tags && p.tags.length > 0 ? `<div class="badge-row">${p.tags.map(t => `<span class="micro-badge">${t}</span>`).join('')}</div>` : '';
-                        let subHtml = p.subtitle ? `<span class="product-sub">${p.subtitle}</span>` : '';
-                        let thumbHtml = p.image ? `<div class="product-thumb-wrap"><img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.parentElement.remove()"></div>` : '';
-                        grid.innerHTML += `<div class="product-card">${thumbHtml}<div class="product-body"><div><div class="product-main-row"><h3 class="product-name">${p.name}</h3><div class="product-leader-dots"></div><span class="product-price">${p.price} تومان</span></div>${subHtml}</div>${tagsHtml}</div></div>`;
-                    });
-                    section.appendChild(grid); menuContainer.appendChild(section);
-                }
-            });
-            if (!hasItems) menuContainer.innerHTML = `<div class="no-results">محصولی یافت نشد.</div>`;
-        }
+        function updateUI() { renderFilters(); renderMenu(); }
+        searchBar.oninput = (e) => { searchQuery = e.target.value; renderMenu(); };
+        themeBtn.onclick = () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+            themeBtn.textContent = isDark ? ' حالت تاریک' : ' حالت روشن';
+        };
 
-        function updateUI() { renderFilters(); renderMenu(); }
-        searchBar.oninput = (e) => { searchQuery = e.target.value; renderMenu(); };
-        themeBtn.onclick = () => {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
-            themeBtn.textContent = isDark ? '🌙 حالت تاریک' : '☀️ حالت روشن';
-        };
+        // Render the menu immediately — it must never depend on the QR script.
+        updateUI();
 
-        // Render the menu immediately — it must never depend on the QR script.
-        updateUI();
-
-        // QR code is a nice-to-have; if the CDN script fails to load for any
-        // reason, it must not be able to take the rest of the page down with it.
-        window.addEventListener('load', () => {
-            try {
-                let qurl = window.location.href;
-                if (window.location.protocol === 'file:') { qurl = "https://github.io"; }
-                if (typeof QRCode !== 'undefined') {
-                    new QRCode(document.getElementById("qrcode"), { text: qurl, width: 110, height: 110, colorDark: "#12312f", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-                } else {
-                    document.getElementById("qrcode").textContent = '—';
-                }
-            } catch (err) {
-                console.error('QR generation failed:', err);
-            }
-        });
-    </script>
+        // QR code is a nice-to-have; if the CDN script fails to load for any
+        // reason, it must not be able to take the rest of the page down with it.
+        window.addEventListener('load', () => {
+            try {
+                let qurl = window.location.href;
+                if (window.location.protocol === 'file:') { qurl = "https://github.io"; }
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(document.getElementById("qrcode"), { text: qurl, width: 110, height: 110, colorDark: "#12312f", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+                } else {
+                    document.getElementById("qrcode").textContent = '—';
+                }
+            } catch (err) {
+                console.error('QR generation failed:', err);
+            }
+        });
+    </script>
 </body>
 </html>
