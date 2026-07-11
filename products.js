@@ -1,7 +1,7 @@
 window.menuData = [
   {
     "category": "اسپرسوبار",
-    "image": "images/espresso.jpg",
+    "image": "",
     "products": [
       {
         "name": "اسپرسو ویژه",
@@ -133,7 +133,7 @@ window.menuData = [
   },
   {
     "category": "نوشیدنی های گرم",
-    "image": "images/hot-drinks.jpg",
+    "image": "",
     "products": [
       {
         "name": "شیرپسته داغ",
@@ -220,7 +220,7 @@ window.menuData = [
   },
   {
     "category": "نوشیدنی های سرد",
-    "image": "images/cold-drinks.jpg",
+    "image": "",
     "products": [
       {
         "name": "آیس لاته",
@@ -307,7 +307,7 @@ window.menuData = [
   },
   {
     "category": "شیک ها",
-    "image": "images/herbal-tea.jpg",
+    "image": "",
     "products": [
       {
         "name": "شیک توت فرنگی",
@@ -394,7 +394,7 @@ window.menuData = [
   },
   {
     "category": "دمنوش ها",
-    "image": "images/tea.jpg",
+    "image": "",
     "products": [
       {
         "name": "دمنوش سلامتی (تقویت سیستم ایمنی بدن)",
