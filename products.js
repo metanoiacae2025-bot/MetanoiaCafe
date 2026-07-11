@@ -1,7 +1,7 @@
 window.menuData = [
   {
     "category": "اسپرسوبار",
-    "image": "",
+    "image": "images/EspressoBar.jpg",
     "products": [
       {
         "name": "اسپرسو ویژه",
@@ -10,7 +10,7 @@ window.menuData = [
         "tags": [
           "فول کافئین"
         ],
-        "image": ""
+        "image": "images/EspressoVIP.jpg"
       },
       {
         "name": "اسپرسو عربیکا",
@@ -220,7 +220,7 @@ window.menuData = [
   },
   {
     "category": "نوشیدنی های سرد",
-    "image": "",
+    "image": "images/ColdDrinks.jpg",
     "products": [
       {
         "name": "آیس لاته",
@@ -454,7 +454,7 @@ window.menuData = [
   },
   {
     "category": "چای ها",
-    "image": "",
+    "image": "images/TeaBar.jpg",
     "products": [
       {
         "name": "چای سیاه",
