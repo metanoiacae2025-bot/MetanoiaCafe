@@ -626,7 +626,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "",
         "tags": [],
-        "image": ""
+        "image": "images/hb.jpg"
       },
       {
         "name": "لایف میکس بری",
