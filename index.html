@@ -1,105 +1,253 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منوی کافه متانویا</title>
-    <meta name="description" content="منوی دیجیتال کافه متانویا— اسپرسو، نوشیدنی گرم و سرد، دمنوش و چای">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
-    <meta name="theme-color" content="#12312f">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-
-    <!-- External structured inventory data -->
-    <script src="products.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منوی کافه متانویا</title>
+    <meta name="description" content="منوی دیجیتال کافه متانویا— اسپرسو، نوشیدنی گرم و سرد، دمنوش و چای">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#1E1E1E">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="products.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header-actions"><button class="header-btn" id="theme-btn">🌙 حالت تاریک</button></div>
-        <header><h1>کافه متانویا</h1><p>نوری در دل تاریکی</p></header>
-        <div class="qr-section"><p> 📱 ما رو به دوستان خود معرفی کنید</p><div id="qrcode"></div></div>
-        <input type="text" id="search-bar" class="search-input" placeholder="جستجوی عنوان محصول در کافه متانویا...">
-        <div class="filters-container" id="filters-wrapper"></div>
-        <main id="cafe-menu"></main>
-    </div>
-    <script>
-        let activeCategory = "همه", searchQuery = "";
-        const menuContainer = document.getElementById('cafe-menu'), filtersWrapper = document.getElementById('filters-wrapper'), searchBar = document.getElementById('search-bar'), themeBtn = document.getElementById('theme-btn');
+    <div class="container">
+        <div class="header-actions">
+            <button class="header-btn" id="theme-btn">🌙 حالت تاریک</button>
+        </div>
+        <header>
+            <img src="icon.svg" class="coffee-bean-icon" alt="دانه قهوه" width="64" height="64">
+            <h1>کافه متانویا</h1>
+            <p>نوری در دل تاریکی</p>
+        </header>
 
-        function normalize(str) {
-            return (str || '').replace(/ي/g, 'ی').replace(/ك/g, 'ک').toLowerCase();
-        }function toPersianDigits(str) {    const en = "0123456789";    const fa = "۰۱۲۳۴۵۶۷۸۹";    return String(str).replace(/[0-9]/g, d => fa[en.indexOf(d)]);}
-        function renderFilters() {
-            filtersWrapper.innerHTML = '';
-            if (!window.menuData) return;
-            ["همه", ...window.menuData.map(g => g.category)].forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = `filter-btn ${activeCategory === cat ? 'active' : ''}`;
-                btn.textContent = cat;
-                btn.onclick = () => { activeCategory = cat; updateUI(); };
-                filtersWrapper.appendChild(btn);
-            });
-        }
+        <div class="menu-layout">
+            <!-- ستون اصلی منو -->
+            <main class="menu-column">
+                <input type="text" id="search-bar" class="search-input" placeholder="جستجوی عنوان محصول...">
+                <div class="filters-container" id="filters-wrapper"></div>
+                <div id="cafe-menu"></div>
+            </main>
 
-        function renderMenu() {
-            menuContainer.innerHTML = ''; let hasItems = false;
-            if (!window.menuData) return;
-            const q = normalize(searchQuery);
-            window.menuData.forEach(group => {
-                if (activeCategory !== "همه" && group.category !== activeCategory) return;
-                const filtered = group.products.filter(p => normalize(p.name).includes(q) || (p.subtitle && normalize(p.subtitle).includes(q)));
-                if (filtered.length > 0) {
-                    hasItems = true;
-                    const section = document.createElement('section');
-                    section.className = 'category-section';
-                    let bannerHtml = group.image ? `<div class="category-banner" style="background-image:url('${group.image}')"></div>` : '';
-                    section.innerHTML = `${bannerHtml}<h2 class="category-title">${group.category}</h2>`;
-                    const grid = document.createElement('div');
-                    grid.className = 'products-grid';
+            <!-- سایدبار اطلاعات (با اسلایدر) -->
+            <aside class="info-column">
+                <h3>📋 کافه متانویا</h3>
+                
+                <!-- اسلایدر ۶۰*۶۰ -->
+                <div class="slider-container" id="shop-slider">
+                    <div class="slider-track" id="slider-track">
+                        <img id="slide-1" src="" alt="مغازه" onerror="this.style.display='none'">
+                        <img id="slide-2" src="" alt="مغازه" onerror="this.style.display='none'">
+                        <img id="slide-3" src="" alt="مغازه" onerror="this.style.display='none'">
+                    </div>
+                    <button class="slider-btn next" onclick="changeSlide(1)">❯</button>
+                    <button class="slider-btn prev" onclick="changeSlide(-1)">❮</button>
+                    <div class="slider-dots" id="slider-dots">
+                        <span onclick="goToSlide(0)"></span>
+                        <span onclick="goToSlide(1)"></span>
+                        <span onclick="goToSlide(2)"></span>
+                    </div>
+                </div>
 
-                    filtered.forEach(p => {
-                        let tagsHtml = p.tags && p.tags.length > 0 ? `<div class="badge-row">${p.tags.map(t => `<span class="micro-badge">${t}</span>`).join('')}</div>` : '';
-                        let subHtml = p.subtitle ? `<span class="product-sub">${p.subtitle}</span>` : '';
-                        let thumbHtml = p.image ? `<div class="product-thumb-wrap"><img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.parentElement.remove()"></div>` : '';
-                        grid.innerHTML += `<div class="product-card">${thumbHtml}<div class="product-body"><div><div class="product-main-row"><h3 class="product-name">${p.name}</h3><div class="product-leader-dots"></div><span class="product-price">${toPersianDigits(p.price)} تومان</span></div>${subHtml}</div>${tagsHtml}</div></div>`;
-                    });
-                    section.appendChild(grid); menuContainer.appendChild(section);
-                }
-            });
-            if (!hasItems) menuContainer.innerHTML = `<div class="no-results">محصولی یافت نشد.</div>`;
-        }
+                <div class="info-item"><span class="icon">📍</span> <span id="info-address">آدرس را وارد کنید</span></div>
+                <div class="info-item"><span class="icon">📞</span> <span id="info-phone">شماره تماس</span></div>
+                <div class="info-item"><span class="icon">📸</span> <a id="info-instagram" href="#" target="_blank" style="color:var(--text); text-decoration:none;">@username</a></div>
+                <div class="info-item" style="justify-content:center; border-bottom:none; flex-direction:column; gap:4px; padding-top:12px;">
+                    <span style="font-size:0.75rem; color:var(--text-muted);">برای دیدن منو اسکن کنید</span>
+                    <div id="qrcode" style="background:#fff; padding:8px; border-radius:12px; width:130px; height:130px; display:flex; justify-content:center; align-items:center; margin:0 auto;"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
 
-        function updateUI() { renderFilters(); renderMenu(); }
-        searchBar.oninput = (e) => { searchQuery = e.target.value; renderMenu(); };
-        themeBtn.onclick = () => {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
-            themeBtn.textContent = isDark ? '🌙 حالت تاریک' : '☀️ حالت روشن' ;
+    <script>
+        // اسلایدر
+        let currentSlide = 0;
+        function updateSlider() {
+            const track = document.getElementById('slider-track');
+            track.style.transform = `translateX(-${currentSlide * 33.333}%)`;
+            document.querySelectorAll('#slider-dots span').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentSlide);
+            });
+        }
+        function changeSlide(dir) {
+            const slides = document.querySelectorAll('#slider-track img');
+            const visible = Array.from(slides).filter(img => img.style.display !== 'none');
+            if (visible.length === 0) return;
+            currentSlide = (currentSlide + dir + visible.length) % visible.length;
+            updateSlider();
+        }
+        function goToSlide(idx) {
+            const slides = document.querySelectorAll('#slider-track img');
+            const visible = Array.from(slides).filter(img => img.style.display !== 'none');
+            if (idx >= 0 && idx < visible.length) {
+                currentSlide = idx;
+                updateSlider();
+            }
+        }
+
+        // منو
+        let activeCategory = "همه", searchQuery = "";
+        const menuContainer = document.getElementById('cafe-menu'), filtersWrapper = document.getElementById('filters-wrapper'), searchBar = document.getElementById('search-bar'), themeBtn = document.getElementById('theme-btn');
+
+        // آرایه آیکون‌ها برای فیلترها
+        const filterIcons = {
+            "همه": "📋",
+            "اسپرسوبار": "☕",
+            "نوشیدنی های گرم": "🫖",
+            "نوشیدنی های سرد": "🥤",
+            "شیک ها": "🍦",
+            "دمنوش ها": "🍵",
+            "چای ها": "🫖",
+            "باقلوا ها": "🥮",
+            "کیک ها": "🍰",
+            "صبحانه": "🥐",
+            "نوشیدنی های متفرقه": "🧋"
+        };
+        // آیکون پیش‌فرض در صورت عدم تطابق
+        const defaultIcon = "📦";
+
+        function normalize(str) {
+            return (str || '').replace(/ي/g, 'ی').replace(/ك/g, 'ک').toLowerCase();
+        }
+        function toPersianDigits(str) {
+            const en = "0123456789";
+            const fa = "۰۱۲۳۴۵۶۷۸۹";
+            return String(str).replace(/[0-9]/g, d => fa[en.indexOf(d)]);
+        }
+
+        function renderFilters() {
+            filtersWrapper.innerHTML = '';
+            if (!window.menuData) return;
+            
+            const categories = ["همه", ...window.menuData.map(g => g.category)];
+            categories.forEach(cat => {
+                const btn = document.createElement('div');
+                btn.className = `filter-btn ${activeCategory === cat ? 'active' : ''}`;
+                // دریافت آیکون از نقشه
+                const icon = filterIcons[cat] || defaultIcon;
+                btn.innerHTML = `<div class="filter-icon">${icon}</div><div class="filter-label">${cat}</div>`;
+                btn.onclick = () => { activeCategory = cat; updateUI(); };
+                filtersWrapper.appendChild(btn);
+            });
+        }
+
+        function renderMenu() {
+            menuContainer.innerHTML = ''; let hasItems = false;
+            if (!window.menuData) return;
+            const q = normalize(searchQuery);
+            window.menuData.forEach(group => {
+                if (activeCategory !== "همه" && group.category !== activeCategory) return;
+                const filtered = group.products.filter(p => normalize(p.name).includes(q) || (p.subtitle && normalize(p.subtitle).includes(q)));
+                if (filtered.length > 0) {
+                    hasItems = true;
+                    const section = document.createElement('section');
+                    section.className = 'category-section';
+                    // بنر گروه
+                    let bannerHtml = group.image ? `<div class="category-banner" style="background-image:url('${group.image}')"></div>` : '';
+                    if(bannerHtml) section.innerHTML = `${bannerHtml}`;
+                    
+                    const title = document.createElement('h2');
+                    title.className = 'category-title';
+                    title.textContent = group.category;
+                    section.appendChild(title);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'products-grid';
+
+                    filtered.forEach(p => {
+                        let subHtml = p.subtitle ? `<span class="product-sub">${p.subtitle}</span>` : '';
+                        
+                        // عکس به عنوان سمت راست کارت
+                        let thumbHtml = p.image ? `<div class="product-thumb-wrap"><img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.parentElement.style.background='var(--badge-bg)'"></div>` : `<div class="product-thumb-wrap" style="background:var(--badge-bg)"></div>`;
+                        
+                        grid.innerHTML += `
+                            <div class="product-card">
+                                ${thumbHtml}
+                                <div class="product-body">
+                                    <div class="product-main-row">
+                                        <h3 class="product-name">${p.name}</h3>
+                                        ${subHtml}
+                                    </div>
+                                    <span class="product-price">${toPersianDigits(p.price)} تومان</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    section.appendChild(grid); menuContainer.appendChild(section);
+                }
+            });
+            if (!hasItems) menuContainer.innerHTML = `<div class="no-results">محصولی یافت نشد.</div>`;
+        }
+
+        function renderInfo() {
+            const info = window.cafeInfo || { address: '', phone: '', instagram: '', images: ['', '', ''] };
+            document.getElementById('info-address').textContent = info.address || 'آدرس را وارد کنید';
+            document.getElementById('info-phone').textContent = info.phone || 'شماره تماس';
+            const instaLink = document.getElementById('info-instagram');
+            if (info.instagram) {
+                instaLink.href = 'https://instagram.com/' + info.instagram;
+                instaLink.textContent = '@' + info.instagram;
+            } else {
+                instaLink.href = '#';
+                instaLink.textContent = '@username';
+            }
+            const slides = document.querySelectorAll('#slider-track img');
+            slides.forEach((img, i) => {
+                if (info.images && info.images[i]) {
+                    img.src = info.images[i];
+                    img.style.display = 'block';
+                } else {
+                    img.style.display = 'none';
+                }
+            });
+            const visibleSlides = Array.from(slides).filter(img => img.style.display !== 'none');
+            if (visibleSlides.length > 0) {
+                currentSlide = 0;
+                updateSlider();
+                document.getElementById('slider-dots').style.display = 'flex';
+            } else {
+                document.getElementById('slider-dots').style.display = 'none';
+            }
+        }
+
+        function updateUI() { 
+            renderFilters(); 
+            renderMenu(); 
+            renderInfo(); 
+            // این یک خط کد اضافه شده تا صفحه به بالای منو برود
+            if (menuContainer) {
+                menuContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        searchBar.oninput = (e) => { searchQuery = e.target.value; renderMenu(); };
+        themeBtn.onclick = () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
+            themeBtn.textContent = isDark ? '🌙 حالت تاریک' : '☀️ حالت روشن' ;
         };
 
-        // Render the menu immediately — it must never depend on the QR script.
-        updateUI();
+        updateUI();
 
-        // QR code is a nice-to-have; if the CDN script fails to load for any
-        // reason, it must not be able to take the rest of the page down with it.
-        window.addEventListener('load', () => {
-            try {
-                let qurl = window.location.href;
-                if (window.location.protocol === 'file:') { qurl = "https://github.io"; }
-                if (typeof QRCode !== 'undefined') {
-                    new QRCode(document.getElementById("qrcode"), { text: qurl, width: 110, height: 110, colorDark: "#12312f", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-                } else {
-                    document.getElementById("qrcode").textContent = '—';
-                }
-            } catch (err) {
-                console.error('QR generation failed:', err);
-            }
-        });
-    </script>
+        window.addEventListener('load', () => {
+            try {
+                let qurl = window.location.href;
+                if (window.location.protocol === 'file:') { qurl = "https://github.io"; }
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(document.getElementById("qrcode"), { text: qurl, width: 130, height: 130, colorDark: "#1E1E1E", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+                } else {
+                    document.getElementById("qrcode").textContent = '—';
+                }
+            } catch (err) {
+                console.error('QR generation failed:', err);
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,10 +1,10 @@
 {
-  "name": "کافه آذربایجان",
-  "short_name": "منو آذربایجان",
+  "name": "کافه متانویا",
+  "short_name": "متانویا",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#12312f",
-  "theme_color": "#12312f",
+  "background_color": "#F7F4EF",
+  "theme_color": "#1F4E79",
   "orientation": "portrait-primary",
   "icons": [
     {
