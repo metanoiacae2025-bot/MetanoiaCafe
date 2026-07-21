@@ -188,15 +188,15 @@
 
         function renderInfo() {
             const info = window.cafeInfo || { address: '', phone: '', instagram: '', images: ['', '', ''] };
-            document.getElementById('info-address').textContent = info.address || 'آدرس را وارد کنید';
-            document.getElementById('info-phone').textContent = info.phone || 'شماره تماس';
+            document.getElementById('info-address').textContent = info.address || 'خیابان انقلاب، خیابان ابوریحان، نرسیده به لبافی نژاد، کافه متانویا';
+            document.getElementById('info-phone').textContent = info.phone || '021-66962484';
             const instaLink = document.getElementById('info-instagram');
             if (info.instagram) {
                 instaLink.href = 'https://instagram.com/' + info.instagram;
                 instaLink.textContent = '@' + info.instagram;
             } else {
                 instaLink.href = '#';
-                instaLink.textContent = '@username';
+                instaLink.textContent = '@CAFFEE_METANOIA';
             }
             const slides = document.querySelectorAll('#slider-track img');
             slides.forEach((img, i) => {
