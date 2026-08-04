@@ -518,6 +518,34 @@ window.activateMap = function (btn) {
                 console.error('QR generation failed:', err);
             }
         });
+        /* ===== ثبت Service Worker (فقط روی HTTPS یا localhost کار می‌کند) ===== */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', async () => {
+        try {
+            const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+
+            // آپدیت جدید پیدا شد → پس از آماده شدن، یک‌بار رفرش
+            reg.addEventListener('updatefound', () => {
+                const sw = reg.installing;
+                if (!sw) return;
+                sw.addEventListener('statechange', () => {
+                    if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+                        sw.postMessage('SKIP_WAITING');
+                    }
+                });
+            });
+
+            let refreshed = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshed) return;
+                refreshed = true;
+                window.location.reload();
+            });
+        } catch (e) {
+            console.warn('SW registration failed:', e);
+        }
+    });
+}
     </script>
 </body>
 </html>
