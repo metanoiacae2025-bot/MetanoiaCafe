@@ -390,46 +390,69 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
     text-align: center;
     font-size: 1.2rem;
 }
-
-.slider-container {
+/* ===== فاز ۳ — اسلایدر ===== */
+.slider {
     position: relative;
     width: 100%;
-    height: 150px;
     margin: 0 0 16px 0;
-    overflow: hidden;
     border-radius: 12px;
+    overflow: hidden;
     border: 1px solid var(--border);
     background: var(--badge-bg);
     box-shadow: 0 2px 8px var(--shadow);
+    outline-offset: 3px;
+}
+.slider-viewport {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
 }
 .slider-track {
     display: flex;
-    width: 300%;
+    direction: ltr; /* حرکت قطعی، مستقل از RTL بودن صفحه */
     height: 100%;
-    transition: transform 0.45s cubic-bezier(.4,0,.2,1);
+    will-change: transform;
+    transition: transform .5s cubic-bezier(.4, 0, .2, 1);
 }
-.slider-track img {
-    width: 33.333%;
+.slide {
+    flex: 0 0 100%;
+    height: 100%;
+    position: relative;
+}
+.slide img {
+    width: 100%;
     height: 100%;
     object-fit: cover;
-    flex-shrink: 0;
+    display: block;
 }
+.slide.slide-error img { visibility: hidden; }
+.slide.slide-error::after {
+    content: '☕';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--text-muted);
+}
+
 .slider-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(255,255,255,0.85);
+    background: rgba(255, 255, 255, 0.85);
     border: none;
     border-radius: 50%;
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
     z-index: 10;
     padding: 0;
     line-height: 1;
@@ -437,26 +460,27 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
 .slider-btn:hover { background: #fff; transform: translateY(-50%) scale(1.08); }
 .slider-btn.prev { right: 6px; }
 .slider-btn.next { left: 6px; }
+
 .slider-dots {
     position: absolute;
-    bottom: 6px;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 5px;
+    gap: 6px;
     z-index: 10;
 }
-.slider-dots span {
-    width: 7px;
-    height: 7px;
+.slider-dots button {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: none;
     border-radius: 50%;
-    background: rgba(255,255,255,0.45);
+    background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
 }
-.slider-dots span.active {
-    background: #fff;
-    transform: scale(1.25);
-}
+.slider-dots button.active { background: #fff; transform: scale(1.3); }
 
 .info-list { display: flex; flex-direction: column; }
 .info-item {
@@ -481,22 +505,69 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
 [data-theme="dark"] .info-link:hover { color: var(--price); border-bottom-color: var(--price); }
 
 /* دکمه مسیریابی */
-.map-cta {
+/* ===== فاز ۴ — نقشه ===== */
+.map-embed {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    margin-top: 14px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--badge-bg);
+}
+.map-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+.map-placeholder {
+    width: 100%;
+    height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    margin-top: 14px;
-    padding: 11px 14px;
+    gap: 4px;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 30% 30%, rgba(31, 78, 121, .10), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(107, 58, 42, .10), transparent 60%),
+        var(--badge-bg);
+}
+.map-placeholder:hover { filter: brightness(1.03); }
+.map-pin { font-size: 1.9rem; }
+.map-ph-title { font-weight: 600; font-size: 0.9rem; }
+.map-ph-hint { font-size: 0.7rem; color: var(--text-muted); text-align: center; line-height: 1.6; }
+
+.map-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+.map-chip {
+    flex: 1 1 auto;
+    text-align: center;
+    padding: 8px 12px;
     border-radius: var(--radius-pill);
-    background: linear-gradient(100deg, var(--navy), var(--burnt-brown));
-    color: #fff;
-    font-size: 0.85rem;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    font-size: 0.78rem;
     font-weight: 500;
     text-decoration: none;
-    box-shadow: 0 4px 12px var(--shadow);
+    border: 1px solid var(--border);
 }
-.map-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--shadow); }
+.map-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 10px var(--shadow); }
+
+@media (min-width: 600px) {
+    .slider-viewport { aspect-ratio: 21 / 9; }
+}
 
 #cafe-menu {
     min-height: 150px;
