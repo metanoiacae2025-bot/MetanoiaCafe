@@ -47,28 +47,6 @@
     <script>
         // اسلایدر
         let currentSlide = 0;
-        function updateSlider() {
-            const track = document.getElementById('slider-track');
-            track.style.transform = `translateX(-${currentSlide * 33.333}%)`;
-            document.querySelectorAll('#slider-dots span').forEach((dot, idx) => {
-                dot.classList.toggle('active', idx === currentSlide);
-            });
-        }
-        function changeSlide(dir) {
-            const slides = document.querySelectorAll('#slider-track img');
-            const visible = Array.from(slides).filter(img => img.style.display !== 'none');
-            if (visible.length === 0) return;
-            currentSlide = (currentSlide + dir + visible.length) % visible.length;
-            updateSlider();
-        }
-        function goToSlide(idx) {
-            const slides = document.querySelectorAll('#slider-track img');
-            const visible = Array.from(slides).filter(img => img.style.display !== 'none');
-            if (idx >= 0 && idx < visible.length) {
-                currentSlide = idx;
-                updateSlider();
-            }
-        }
 
         // منو
         let activeCategory = "همه", searchQuery = "";
@@ -115,15 +93,6 @@
                 filtersWrapper.appendChild(btn);
             });
         }
-
-        <!-- ===== اطلاعات کافه (فاز ۴/۵) ===== -->
-        <aside class="info-column" id="cafe-info" aria-label="اطلاعات تماس و موقعیت کافه"></aside>
-    </div><!-- /container -->
-
-    <!-- دکمه بازگشت به بالا (فاز ۵) -->
-    <button id="back-to-top" class="back-to-top" type="button" aria-label="بازگشت به بالای صفحه" hidden>
-        ↑
-    </button>
 
 /* ===================== فاز ۱ و ۲ — رندر منو ===================== */
 
@@ -453,11 +422,6 @@ const CafeSlider = (function () {
 
     return { init, goTo, next, prev, stop, start };
 })();
-
-// سازگاری با فراخوانی‌های قدیمی
-window.changeSlide = (s) => (s > 0 ? CafeSlider.next() : CafeSlider.prev());
-window.goToSlide = (i) => CafeSlider.goTo(i);
-window.updateSlider = () => {};
 
 /* ===================== فاز ۴ — فعال‌سازی نقشه با کلیک ===================== */
 window.activateMap = function (btn) {
