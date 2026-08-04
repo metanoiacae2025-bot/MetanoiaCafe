@@ -169,7 +169,34 @@ function buildCategoryBlock(cat, items) {
         </div>
     </section>`;
 }
+/* ===== رندر منو ===== */
+function renderMenu() {
+    if (!menuContainer) return;
 
+    const q = normalize(searchQuery);
+    const sections = [];
+
+    (window.menuData || []).forEach(cat => {
+        // فیلتر دسته‌بندی
+        if (activeCategory !== "همه" && cat.category !== activeCategory) return;
+
+        // فیلتر جستجو
+        const items = (cat.products || []).filter(p => {
+            if (!q) return true;
+            const name = normalize(p.name);
+            const subtitle = normalize(p.subtitle || '');
+            return name.includes(q) || subtitle.includes(q);
+        });
+
+        if (items.length) {
+            sections.push(buildCategoryBlock(cat, items));
+        }
+    });
+
+    menuContainer.innerHTML = sections.length
+        ? sections.join('')
+        : '<div class="no-results" style="padding:2rem;text-align:center;color:#999;">محصولی یافت نشد.</div>';
+}
 /* ===================== اطلاعات کافه + لینک نقشه ===================== */
 function renderInfo() {
     const box = document.getElementById('cafe-info') || document.querySelector('.info-column');
