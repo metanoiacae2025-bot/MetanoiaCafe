@@ -35,36 +35,14 @@
                 <div id="cafe-menu"></div>
             </main>
 
-            <!-- سایدبار اطلاعات (با اسلایدر) -->
-            <aside class="info-column">
-                <h3>📋 کافه متانویا</h3>
-                
-                <!-- اسلایدر ۶۰*۶۰ -->
-                <div class="slider-container" id="shop-slider">
-                    <div class="slider-track" id="slider-track">
-                        <img id="slide-1" src="" alt="مغازه" onerror="this.style.display='none'">
-                        <img id="slide-2" src="" alt="مغازه" onerror="this.style.display='none'">
-                        <img id="slide-3" src="" alt="مغازه" onerror="this.style.display='none'">
-                    </div>
-                    <button class="slider-btn next" onclick="changeSlide(1)">❯</button>
-                    <button class="slider-btn prev" onclick="changeSlide(-1)">❮</button>
-                    <div class="slider-dots" id="slider-dots">
-                        <span onclick="goToSlide(0)"></span>
-                        <span onclick="goToSlide(1)"></span>
-                        <span onclick="goToSlide(2)"></span>
-                    </div>
-                </div>
+        <!-- ===== اطلاعات کافه (فاز ۴/۵) ===== -->
+        <aside class="info-column" id="cafe-info" aria-label="اطلاعات تماس و موقعیت کافه"></aside>
+    </div><!-- /container -->
 
-                <div class="info-item"><span class="icon">📍</span> <span id="info-address">خیابان انقلاب، خیابان ابوریحان، نرسیده به لبافی نژاد، کافه متانویا</span></div>
-                <div class="info-item"><span class="icon">📞</span> <span id="info-phone">021-66962484</span></div>
-                <div class="info-item"><span class="icon">📸</span> <a id="info-instagram" href="#" target="_blank" style="color:var(--text); text-decoration:none;">@CAFFEE_METANOIA</a></div>
-                <div class="info-item" style="justify-content:center; border-bottom:none; flex-direction:column; gap:4px; padding-top:12px;">
-                    <span style="font-size:0.75rem; color:var(--text-muted);">ما را به دوستان خود معرفی کنید</span>
-                    <div id="qrcode" style="background:#fff; padding:8px; border-radius:12px; width:130px; height:130px; display:flex; justify-content:center; align-items:center; margin:0 auto;"></div>
-                </div>
-            </aside>
-        </div>
-    </div>
+    <!-- دکمه بازگشت به بالا (فاز ۵) -->
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="بازگشت به بالای صفحه" hidden>
+        ↑
+    </button>
 
     <script>
         // اسلایدر
@@ -138,84 +116,376 @@
             });
         }
 
-        function renderMenu() {
-            menuContainer.innerHTML = ''; let hasItems = false;
-            if (!window.menuData) return;
-            const q = normalize(searchQuery);
-            window.menuData.forEach(group => {
-                if (activeCategory !== "همه" && group.category !== activeCategory) return;
-                const filtered = group.products.filter(p => normalize(p.name).includes(q) || (p.subtitle && normalize(p.subtitle).includes(q)));
-                if (filtered.length > 0) {
-                    hasItems = true;
-                    const section = document.createElement('section');
-                    section.className = 'category-section';
-                    // بنر گروه
-                    let bannerHtml = group.image ? `<div class="category-banner" style="background-image:url('${group.image}')"></div>` : '';
-                    if(bannerHtml) section.innerHTML = `${bannerHtml}`;
-                    
-                    const title = document.createElement('h2');
-                    title.className = 'category-title';
-                    title.textContent = group.category;
-                    section.appendChild(title);
+        <!-- ===== اطلاعات کافه (فاز ۴/۵) ===== -->
+        <aside class="info-column" id="cafe-info" aria-label="اطلاعات تماس و موقعیت کافه"></aside>
+    </div><!-- /container -->
 
-                    const grid = document.createElement('div');
-                    grid.className = 'products-grid';
+    <!-- دکمه بازگشت به بالا (فاز ۵) -->
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="بازگشت به بالای صفحه" hidden>
+        ↑
+    </button>
 
-                    filtered.forEach(p => {
-                        let subHtml = p.subtitle ? `<span class="product-sub">${p.subtitle}</span>` : '';
-                        
-                        // عکس به عنوان سمت راست کارت
-                        let thumbHtml = p.image ? `<div class="product-thumb-wrap"><img class="product-thumb" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.parentElement.style.background='var(--badge-bg)'"></div>` : `<div class="product-thumb-wrap" style="background:var(--badge-bg)"></div>`;
-                        
-                        grid.innerHTML += `
-                            <div class="product-card">
-                                ${thumbHtml}
-                                <div class="product-body">
-                                    <div class="product-main-row">
-                                        <h3 class="product-name">${p.name}</h3>
-                                        ${subHtml}
-                                    </div>
-                                    <span class="product-price">${toPersianDigits(p.price)} تومان</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    section.appendChild(grid); menuContainer.appendChild(section);
-                }
-            });
-            if (!hasItems) menuContainer.innerHTML = `<div class="no-results">محصولی یافت نشد.</div>`;
+/* ===================== فاز ۱ و ۲ — رندر منو ===================== */
+
+// تصویر جانشین در صورت خطای بارگذاری
+const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' +
+    '<rect width="120" height="120" fill="%23E6DDD1"/>' +
+    '<text x="60" y="66" font-size="34" text-anchor="middle" fill="%236B6B6B">☕</text></svg>'
+);
+
+/**
+ * ساخت کارت عمودی محصول (فاز ۱)
+ * @param {Object} p محصول
+ * @param {Number} i اندیس برای انیمیشن پله‌ای
+ */
+function buildProductCard(p, i) {
+    const img = p.image && p.image.trim() ? p.image : FALLBACK_IMG;
+    const sub = p.subtitle && p.subtitle.trim()
+        ? `<p class="product-sub">${p.subtitle}</p>` : '';
+
+    const tags = Array.isArray(p.tags) && p.tags.length
+        ? `<div class="product-tags">` +
+          p.tags.filter(Boolean).map(t => `<span class="product-tag">${t}</span>`).join('') +
+          `</div>`
+        : '';
+
+    const price = p.price && String(p.price).trim()
+        ? `${toPersianDigits(p.price)} <span class="currency">تومان</span>`
+        : '<span class="price-na">ناموجود</span>';
+
+    return `
+    <article class="product-card" style="--delay:${Math.min(i, 12) * 35}ms" tabindex="0">
+        <div class="product-thumb-wrap">
+            <img class="product-thumb" src="${img}" alt="${p.name || 'محصول'}"
+                 loading="lazy" decoding="async"
+                 onerror="this.onerror=null;this.src='${FALLBACK_IMG}';">
+            ${tags}
+        </div>
+        <div class="product-body">
+            <div class="product-main-row">
+                <h3 class="product-name" title="${p.name || ''}">${p.name || ''}</h3>
+                ${sub}
+            </div>
+            <div class="product-price">${price}</div>
+        </div>
+    </article>`;
+}
+
+/**
+ * ساخت بلوک یک دسته همراه بنر (فاز ۲)
+ * @param {Object} cat دسته‌بندی
+ * @param {Array} items محصولات فیلترشده
+ */
+function buildCategoryBlock(cat, items) {
+    const icon = (typeof iconMap !== 'undefined' && iconMap[cat.category]) || '•';
+
+    // فاز ۲ — بنر دسته‌بندی: فقط اگر image مقدار داشته باشد
+    const banner = cat.image && cat.image.trim()
+        ? `<div class="category-banner">
+               <img src="${cat.image}" alt="${cat.category}" loading="lazy" decoding="async"
+                    onerror="this.closest('.category-banner').remove();">
+               <span class="category-banner-title">${cat.category}</span>
+           </div>`
+        : '';
+
+    return `
+    <section class="category-section" aria-label="${cat.category}">
+        ${banner}
+        <h2 class="category-title"><span class="cat-icon">${icon}</span>${cat.category}
+            <span class="cat-count">${toPersianDigits(items.length)}</span>
+        </h2>
+        <div class="products-grid">
+            ${items.map((p, i) => buildProductCard(p, i)).join('')}
+        </div>
+    </section>`;
+}
+
+/* ===================== اطلاعات کافه + لینک نقشه ===================== */
+function renderInfo() {
+    const box = document.getElementById('cafe-info') || document.querySelector('.info-column');
+    if (!box) return;
+
+    const c = window.cafeInfo || {};
+    const address = (c.address || '').trim();
+    const query = (c.mapQuery && c.mapQuery.trim()) ? c.mapQuery.trim() : address;
+    const hasGeo = Number.isFinite(c.lat) && Number.isFinite(c.lng);
+    const zoom = c.mapZoom || 16;
+
+    // لینک‌های مسیریابی
+    const gmapUrl = hasGeo
+        ? `https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lng}`
+        : (query ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}` : '');
+
+    const neshanUrl = hasGeo
+        ? `https://neshan.org/maps/@${c.lat},${c.lng},${zoom}z`
+        : (query ? `https://neshan.org/maps/search/${encodeURIComponent(query)}` : '');
+
+    const baladUrl = hasGeo
+        ? `https://balad.ir/location?latitude=${c.lat}&longitude=${c.lng}&zoom=${zoom}`
+        : (query ? `https://balad.ir/search?text=${encodeURIComponent(query)}` : '');
+
+    const geoUrl = hasGeo ? `geo:${c.lat},${c.lng}?q=${c.lat},${c.lng}` : '';
+
+    // منبع iframe (بدون API Key)
+    const embedSrc = hasGeo
+        ? `https://maps.google.com/maps?q=${c.lat},${c.lng}&z=${zoom}&output=embed`
+        : (query ? `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=${zoom}&output=embed` : '');
+
+    /* ---------- فاز ۳: اسلایدر ---------- */
+    const imgs = Array.isArray(c.images) ? c.images.filter(Boolean) : [];
+    const n = imgs.length;
+
+    const slider = n ? `
+    <div class="slider" id="cafe-slider" tabindex="0"
+         role="group" aria-roledescription="اسلایدر" aria-label="تصاویر کافه">
+        <div class="slider-viewport">
+            <div class="slider-track">
+                ${imgs.map((src, i) => `
+                <div class="slide" role="group"
+                     aria-label="تصویر ${toPersianDigits(i + 1)} از ${toPersianDigits(n)}"
+                     aria-hidden="${i === 0 ? 'false' : 'true'}">
+                    <img src="${src}" alt="نمای کافه ${toPersianDigits(i + 1)}"
+                         ${i === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'}
+                         decoding="async"
+                         onerror="this.closest('.slide').classList.add('slide-error');">
+                </div>`).join('')}
+            </div>
+        </div>
+        ${n > 1 ? `
+        <button class="slider-btn prev" type="button" aria-label="تصویر قبلی">‹</button>
+        <button class="slider-btn next" type="button" aria-label="تصویر بعدی">›</button>
+        <div class="slider-dots" role="tablist" aria-label="انتخاب تصویر">
+            ${imgs.map((_, i) => `
+            <button type="button" class="${i === 0 ? 'active' : ''}"
+                    aria-current="${i === 0 ? 'true' : 'false'}"
+                    aria-label="تصویر ${toPersianDigits(i + 1)}"></button>`).join('')}
+        </div>` : ''}
+    </div>` : '';
+
+    /* ---------- ردیف‌های اطلاعات ---------- */
+    const rows = [];
+
+    if (address) {
+        rows.push(`
+        <div class="info-item">
+            <span class="icon" aria-hidden="true">📍</span>
+            ${gmapUrl
+                ? `<a class="info-link" href="${gmapUrl}" target="_blank" rel="noopener noreferrer"
+                       title="نمایش روی نقشه">${address}</a>`
+                : `<span>${address}</span>`}
+        </div>`);
+    }
+
+    if (c.phone) {
+        const telDigits = String(c.phone).replace(/[^\d+]/g, '');
+        rows.push(`
+        <div class="info-item">
+            <span class="icon" aria-hidden="true">☎️</span>
+            <a class="info-link" href="tel:${telDigits}" dir="ltr">${toPersianDigits(c.phone)}</a>
+        </div>`);
+    }
+
+    if (c.instagram) {
+        const id = String(c.instagram).replace(/^@/, '');
+        rows.push(`
+        <div class="info-item">
+            <span class="icon" aria-hidden="true">📸</span>
+            <a class="info-link" href="https://instagram.com/${id}"
+               target="_blank" rel="noopener noreferrer" dir="ltr">@${id}</a>
+        </div>`);
+    }
+
+    if (c.hours) {
+        rows.push(`
+        <div class="info-item">
+            <span class="icon" aria-hidden="true">🕒</span>
+            <span>${toPersianDigits(c.hours)}</span>
+        </div>`);
+    }
+
+    if (c.wifi) {
+        rows.push(`
+        <div class="info-item">
+            <span class="icon" aria-hidden="true">📶</span>
+            <span>وای‌فای: <bdi dir="ltr">${c.wifi}</bdi></span>
+        </div>`);
+    }
+
+    /* ---------- فاز ۴: بلوک نقشه ---------- */
+    const mapBlock = embedSrc ? `
+    <div class="map-embed" data-src="${embedSrc}" data-loaded="0">
+        <button type="button" class="map-placeholder" onclick="activateMap(this)"
+                aria-label="نمایش نقشه تعاملی موقعیت کافه">
+            <span class="map-pin" aria-hidden="true">🗺️</span>
+            <span class="map-ph-title">نمایش نقشه تعاملی</span>
+            <span class="map-ph-hint">برای صرفه‌جویی در مصرف داده، نقشه با کلیک شما بارگذاری می‌شود</span>
+        </button>
+    </div>` : '';
+
+    const mapLinks = (gmapUrl || neshanUrl || baladUrl) ? `
+    <div class="map-links" aria-label="مسیریابی با اپلیکیشن‌ها">
+        ${gmapUrl ? `<a class="map-chip" href="${gmapUrl}" target="_blank" rel="noopener noreferrer">گوگل مپ</a>` : ''}
+        ${neshanUrl ? `<a class="map-chip" href="${neshanUrl}" target="_blank" rel="noopener noreferrer">نشان</a>` : ''}
+        ${baladUrl ? `<a class="map-chip" href="${baladUrl}" target="_blank" rel="noopener noreferrer">بلد</a>` : ''}
+        ${geoUrl ? `<a class="map-chip" href="${geoUrl}">اپ نقشه گوشی</a>` : ''}
+    </div>` : '';
+
+    box.innerHTML = `
+        <h3>${c.name || 'اطلاعات کافه'}</h3>
+        ${slider}
+        <div class="info-list">${rows.join('')}</div>
+        ${mapBlock}
+        ${mapLinks}
+        ${gmapUrl ? `
+        <a class="map-cta" href="${gmapUrl}" target="_blank" rel="noopener noreferrer">
+            🧭 مسیریابی تا کافه
+        </a>` : ''}
+    `;
+
+    if (n) CafeSlider.init('#cafe-slider');
+}
+
+/* محافظ سازگاری اسلایدر: تطبیق با تعداد دلخواه تصاویر (فاز ۳ کامل نشده) */
+const CafeSlider = (function () {
+    let root = null, track = null, dots = [], idx = 0, count = 0;
+    let timer = null, startX = 0, deltaX = 0, dragging = false;
+
+    const AUTOPLAY_MS = 5000;
+    const SWIPE_THRESHOLD = 45; // پیکسل
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function apply() {
+        if (!track || !count) return;
+        // track روی direction:ltr است؛ پس جهت حرکت همیشه منفی و قطعی است
+        track.style.transform = `translate3d(${-idx * 100}%, 0, 0)`;
+        dots.forEach((d, i) => {
+            const on = i === idx;
+            d.classList.toggle('active', on);
+            d.setAttribute('aria-current', on ? 'true' : 'false');
+        });
+        root.querySelectorAll('.slide').forEach((s, i) => {
+            s.setAttribute('aria-hidden', i === idx ? 'false' : 'true');
+        });
+    }
+
+    function goTo(i) {
+        if (!count) return;
+        idx = ((i % count) + count) % count; // پشتیبانی از حرکت حلقه‌ای
+        apply();
+    }
+    const next = () => goTo(idx + 1);
+    const prev = () => goTo(idx - 1);
+
+    function start() {
+        if (reduceMotion || count < 2 || timer) return;
+        timer = setInterval(next, AUTOPLAY_MS);
+    }
+    function stop() {
+        if (timer) { clearInterval(timer); timer = null; }
+    }
+    function restart() { stop(); start(); }
+
+    function onPointerDown(e) {
+        if (count < 2) return;
+        dragging = true; deltaX = 0;
+        startX = (e.touches ? e.touches[0].clientX : e.clientX);
+        stop();
+    }
+    function onPointerMove(e) {
+        if (!dragging) return;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX);
+        deltaX = x - startX;
+    }
+    function onPointerUp() {
+        if (!dragging) return;
+        dragging = false;
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+            // RTL: کشیدن به راست ⇒ تصویر قبلی
+            (deltaX > 0) ? prev() : next();
+        }
+        deltaX = 0;
+        start();
+    }
+
+    function init(selector) {
+        root = document.querySelector(selector || '#cafe-slider');
+        if (!root) return;
+
+        track = root.querySelector('.slider-track');
+        dots = Array.from(root.querySelectorAll('.slider-dots button'));
+        count = root.querySelectorAll('.slide').length;
+        idx = 0;
+
+        if (count < 2) {
+            root.querySelectorAll('.slider-btn, .slider-dots').forEach(el => el.remove());
         }
 
-        function renderInfo() {
-            const info = window.cafeInfo || { address: '', phone: '', instagram: '', images: ['', '', ''] };
-            document.getElementById('info-address').textContent = info.address || 'خیابان انقلاب، خیابان ابوریحان، نرسیده به لبافی نژاد، کافه متانویا';
-            document.getElementById('info-phone').textContent = info.phone || '021-66962484';
-            const instaLink = document.getElementById('info-instagram');
-            if (info.instagram) {
-                instaLink.href = 'https://instagram.com/' + info.instagram;
-                instaLink.textContent = '@' + info.instagram;
-            } else {
-                instaLink.href = '#';
-                instaLink.textContent = '@CAFFEE_METANOIA';
-            }
-            const slides = document.querySelectorAll('#slider-track img');
-            slides.forEach((img, i) => {
-                if (info.images && info.images[i]) {
-                    img.src = info.images[i];
-                    img.style.display = 'block';
-                } else {
-                    img.style.display = 'none';
-                }
-            });
-            const visibleSlides = Array.from(slides).filter(img => img.style.display !== 'none');
-            if (visibleSlides.length > 0) {
-                currentSlide = 0;
-                updateSlider();
-                document.getElementById('slider-dots').style.display = 'flex';
-            } else {
-                document.getElementById('slider-dots').style.display = 'none';
-            }
-        }
+        root.querySelector('.slider-btn.prev')?.addEventListener('click', () => { prev(); restart(); });
+        root.querySelector('.slider-btn.next')?.addEventListener('click', () => { next(); restart(); });
+        dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); restart(); }));
+
+        // کیبورد (دسترس‌پذیری)
+        root.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') { prev(); restart(); }
+            else if (e.key === 'ArrowLeft') { next(); restart(); }
+        });
+
+        // توقف هنگام تعامل کاربر
+        root.addEventListener('mouseenter', stop);
+        root.addEventListener('mouseleave', start);
+        root.addEventListener('focusin', stop);
+        root.addEventListener('focusout', start);
+
+        // لمسی
+        root.addEventListener('touchstart', onPointerDown, { passive: true });
+        root.addEventListener('touchmove', onPointerMove, { passive: true });
+        root.addEventListener('touchend', onPointerUp);
+
+        // صرفه‌جویی منابع در تب پنهان
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? stop() : start();
+        });
+
+        apply();
+        start();
+    }
+
+    return { init, goTo, next, prev, stop, start };
+})();
+
+// سازگاری با فراخوانی‌های قدیمی
+window.changeSlide = (s) => (s > 0 ? CafeSlider.next() : CafeSlider.prev());
+window.goToSlide = (i) => CafeSlider.goTo(i);
+window.updateSlider = () => {};
+
+/* ===================== فاز ۴ — فعال‌سازی نقشه با کلیک ===================== */
+window.activateMap = function (btn) {
+    const wrap = btn.closest('.map-embed');
+    if (!wrap || wrap.dataset.loaded === '1') return;
+    wrap.dataset.loaded = '1';
+
+    const iframe = document.createElement('iframe');
+    iframe.src = wrap.dataset.src;
+    iframe.title = 'نقشه موقعیت کافه';
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    iframe.allowFullscreen = true;
+    iframe.setAttribute('aria-label', 'نقشه موقعیت کافه');
+
+    wrap.innerHTML = '';
+    wrap.appendChild(iframe);
+};
+
+/* ===================== فاز ۵ — دکمه بازگشت به بالا ===================== */
+(function () {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+    const toggle = () => { btn.hidden = window.scrollY < 400; };
+    window.addEventListener('scroll', toggle, { passive: true });
+    btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    toggle();
+})();
 
         function updateUI() { 
             renderFilters(); 
