@@ -19,7 +19,7 @@ window.menuData = [
         "tags": [
           "پریمیوم"
         ],
-        "image": ""
+        "image": "images/EspressoVIP.jpg"
       },
       {
         "name": "آمریکانو روبوستا",
