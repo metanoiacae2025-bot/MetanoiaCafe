@@ -43,8 +43,8 @@
         <aside class="info-column" id="cafe-info" aria-label="اطلاعات تماس و موقعیت کافه"></aside>
     </div><!-- /container -->
 
-    <!-- دکمه بازگشت به بالا (فاز ۵) -->
-    <button id="back-to-top" class="back-to-top" type="button" aria-label="بازگشت به بالای صفحه" hidden>
+    <button id="scroll-top-btn" class="scroll-top-btn" 
+            aria-label="بازگشت به بالا" title="بازگشت به بالا">
         ↑
     </button>
 
@@ -113,34 +113,26 @@ const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
  * @param {Number} i اندیس برای انیمیشن پله‌ای
  */
 function buildProductCard(p, i) {
-    const img = p.image && p.image.trim() ? p.image : FALLBACK_IMG;
-    const sub = p.subtitle && p.subtitle.trim()
-        ? `<p class="product-sub">${p.subtitle}</p>` : '';
-
-    const tags = Array.isArray(p.tags) && p.tags.length
-        ? `<div class="product-tags">` +
-          p.tags.filter(Boolean).map(t => `<span class="product-tag">${t}</span>`).join('') +
-          `</div>`
-        : '';
-
-    const price = p.price && String(p.price).trim()
-        ? `${toPersianDigits(p.price)} <span class="currency">تومان</span>`
-        : '<span class="price-na">ناموجود</span>';
-
+    const badge = p.badge ? `<span class="product-badge badge-${p.badgeType || 'default'}">${p.badge}</span>` : '';
+    const unavailable = p.available === false;
+    const cardClass = unavailable ? 'product-card product-unavailable' : 'product-card';
+    const unavailableOverlay = unavailable ? '<div class="unavailable-overlay"><span>موقتاً ناموجود</span></div>' : '';
+    
     return `
-    <article class="product-card" style="--delay:${Math.min(i, 12) * 35}ms" tabindex="0">
-        <div class="product-thumb-wrap">
-            <img class="product-thumb" src="${img}" alt="${p.name || 'محصول'}"
+    <article class="${cardClass}" tabindex="0" role="article"
+             aria-label="${p.name} ${toPersianDigits(p.price)} تومان ${unavailable ? '- ناموجود' : ''}">
+        <div class="product-image-wrapper">
+            ${badge}
+            ${unavailableOverlay}
+            <img src="${p.image || FALLBACK_IMG}" 
+                 alt="${p.name}" 
                  loading="lazy" decoding="async"
-                 onerror="this.onerror=null;this.src='${FALLBACK_IMG}';">
-            ${tags}
+                 onerror="this.src=\`${FALLBACK_IMG}\`;">
         </div>
-        <div class="product-body">
-            <div class="product-main-row">
-                <h3 class="product-name" title="${p.name || ''}">${p.name || ''}</h3>
-                ${sub}
-            </div>
-            <div class="product-price">${price}</div>
+        <div class="product-info">
+            <h3 class="product-name">${p.name}</h3>
+            ${p.subtitle ? `<p class="product-subtitle">${p.subtitle}</p>` : ''}
+            <div class="product-price">${toPersianDigits(p.price.toLocaleString())} تومان</div>
         </div>
     </article>`;
 }
@@ -552,20 +544,28 @@ window.activateMap = function (btn) {
         };
 
         updateUI();
-
-        window.addEventListener('load', () => {
-            try {
-                let qurl = window.location.href;
-                if (window.location.protocol === 'file:') { qurl = "https://github.io"; }
-                if (typeof QRCode !== 'undefined') {
-                    new QRCode(document.getElementById("qrcode"), { text: qurl, width: 130, height: 130, colorDark: "#1E1E1E", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-                } else {
-                    document.getElementById("qrcode").textContent = '—';
-                }
-            } catch (err) {
-                console.error('QR generation failed:', err);
-            }
+        
+/* ===== دکمهٔ بازگشت به بالا ===== */
+const scrollTopBtn = document.getElementById('scroll-top-btn');
+if (scrollTopBtn) {
+    let scrollTimeout;
+    const checkScroll = () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            scrollTopBtn.classList.toggle('visible', window.scrollY > 400);
+        }, 100);
+    };
+    
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    
+    scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ 
+            top: 0, 
+            behavior: 'smooth' 
         });
+    });
+}
+
         /* ===== ثبت Service Worker (فقط روی HTTPS یا localhost کار می‌کند) ===== */
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
