@@ -521,13 +521,13 @@ window.activateMap = function (btn) {
     wrap.innerHTML = '';
     wrap.appendChild(iframe);
 };
-   /**
- * ساخت کد QR در عنصر #qrcode
- * @param {Number} attempt شمارندهٔ تلاش مجدد وقتی کتابخانه هنوز لود نشده
- */
+/* ===== تولید کد QR (نسخهٔ پایدار — تک‌خروجی) ===== */
 function renderQRCode(attempt) {
     const host = document.getElementById('qrcode');
-    if (!host) return; // مقصد وجود ندارد، بی‌صدا خروج
+    if (!host) return;
+
+    // اگر قبلاً با موفقیت ساخته شده، دوباره نساز (جلوگیری از QR تکراری)
+    if (host.dataset.qrDone === '1' && host.querySelector('img[src]')) return;
 
     const c = window.cafeInfo || {};
     const fallbackUrl = 'https://metanoiacae2025-bot.github.io/MetanoiaCafe/';
@@ -542,13 +542,37 @@ function renderQRCode(attempt) {
     if (typeof QRCode === 'undefined') {
         const n = attempt || 0;
         if (n < 10) { setTimeout(() => renderQRCode(n + 1), 400); return; }
-        host.innerHTML = `<a class="qr-fallback" href="${url}" target="_blank"
-                             rel="noopener noreferrer" dir="ltr">${url}</a>`;
+        host.innerHTML = '<a class="qr-fallback" href="' + url +
+            '" target="_blank" rel="noopener noreferrer" dir="ltr">' + url + '</a>';
         return;
     }
 
+    // یکسان‌سازی خروجی: فقط یک عنصر گرافیکی باقی بماند
+    function normalizeQR() {
+        const img = host.querySelector('img');
+        const canvas = host.querySelector('canvas');
+
+        if (img && img.getAttribute('src')) {
+            img.style.display = 'block';
+            img.style.margin = '0 auto';
+            img.setAttribute('alt', ''); // توضیح روی div والد است
+            if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
+            host.dataset.qrDone = '1';
+            return true;
+        }
+        if (canvas) { // حالت جایگزین
+            canvas.style.display = 'block';
+            canvas.style.margin = '0 auto';
+            if (img && img.parentNode) img.parentNode.removeChild(img);
+            host.dataset.qrDone = '1';
+            return true;
+        }
+        return false;
+    }
+
     try {
-        host.innerHTML = ''; // جلوگیری از QR تکراری در رندر مجدد
+        host.innerHTML = '';
+        host.dataset.qrDone = '0';
         new QRCode(host, {
             text: url,
             width: 130,
@@ -557,16 +581,15 @@ function renderQRCode(attempt) {
             colorLight: '#ffffff',
             correctLevel: QRCode.CorrectLevel.M
         });
-        const nodes = host.querySelectorAll('img, canvas');
-        if (nodes.length > 1) {
-            const keep = host.querySelector('img[src]') || nodes[0];
-            nodes.forEach(el => { if (el !== keep) el.style.display = 'none'; });
-        } catch (err) {
+        normalizeQR();
+        setTimeout(normalizeQR, 60);
+        setTimeout(normalizeQR, 350);
+    } catch (err) {
         console.error('خطا در ساخت کد QR:', err);
-        host.innerHTML = `<a class="qr-fallback" href="${url}" target="_blank"
-                             rel="noopener noreferrer" dir="ltr">${url}</a>`;
+        host.innerHTML = '<a class="qr-fallback" href="' + url +
+            '" target="_blank" rel="noopener noreferrer" dir="ltr">' + url + '</a>';
     }
-}     
+}
 
 /* ===================== فاز ۵ — دکمه بازگشت به بالا ===================== */
 (function () {
@@ -648,19 +671,7 @@ function renderQRCode(attempt) {
         };
 
         updateUI();
-                window.addEventListener('load', () => {
-            try {
-                let qurl = window.location.href;
-                if (window.location.protocol === 'file:') { qurl = "https://github.io"; }
-                if (typeof QRCode !== 'undefined') {
-                    new QRCode(document.getElementById("qrcode"), { text: qurl, width: 130, height: 130, colorDark: "#1E1E1E", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
-                } else {
-                    document.getElementById("qrcode").textContent = '—';
-                }
-            } catch (err) {
-                console.error('QR generation failed:', err);
-            }
-        });
+        renderQRCode(0);
 
         /* ===== ثبت Service Worker (فقط روی HTTPS یا localhost کار می‌کند) ===== */
 if ('serviceWorker' in navigator) {
