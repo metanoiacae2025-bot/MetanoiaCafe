@@ -220,7 +220,7 @@ window.menuData = [
   },
   {
     "category": "نوشیدنی های سرد",
-    "image": "",
+    "image": "images/ColdDrinks.jpg",
     "products": [
       {
         "name": "آیس لاته",
@@ -676,8 +676,10 @@ window.cafeInfo = {
 
     // تصاویر اسلایدر (تعداد آزاد)
     images: [
-        "images/cafe-1.jpg",
-        "images/cafe-2.jpg",
-        "images/cafe-3.jpg"
+        "images/Shop1.jpg",
+        "images/Shop2.jpg",
+        "images/Shop3.jpg",
+        "images/Shop4.jpg",
+        "images/Shop5.jpg"
     ]
 };
