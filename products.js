@@ -10,7 +10,7 @@ window.menuData = [
         "tags": [
           "فول کافئین"
         ],
-        "available": false,
+        "available": true,
         "image": "images/EspressoVIP.jpg"
       },
       {
@@ -20,6 +20,7 @@ window.menuData = [
         "tags": [
           "پریمیوم"
         ],
+        "available": true,
         "image": "images/EspressoVIP.jpg"
       },
       {
@@ -29,6 +30,7 @@ window.menuData = [
         "tags": [
           "کافئین بالا"
         ],
+        "available": true,
         "image": "images/Americano.jpeg"
       },
       {
@@ -38,6 +40,7 @@ window.menuData = [
         "tags": [
           "پریمیوم"
         ],
+        "available": true,
         "image": "images/Americano.jpeg"
       },
       {
@@ -47,6 +50,7 @@ window.menuData = [
         "tags": [
           "شکلاتی"
         ],
+        "available": true,
         "image": "images/Moca.jpeg"
       },
       {
@@ -56,6 +60,7 @@ window.menuData = [
         "tags": [
           "محبوب"
         ],
+        "available": true,
         "image": "images/Latteh.jpg"
       },
       {
@@ -65,6 +70,7 @@ window.menuData = [
         "tags": [
           "محبوب"
         ],
+        "available": true,
         "image": "images/Latteh.jpg"
       },
       {
@@ -74,6 +80,7 @@ window.menuData = [
         "tags": [
           "طعمی خاص"
         ],
+        "available": true,
         "image": "images/Latteh.jpg"
       },
       {
@@ -83,6 +90,7 @@ window.menuData = [
         "tags": [
           "شیرین و گرم"
         ],
+        "available": true,
         "image": "images/Latteh.jpg"
       },
       {
@@ -92,6 +100,7 @@ window.menuData = [
         "tags": [
           "محبوب"
         ],
+        "available": true,
         "image": "images/Moca.jpeg"
       },
       {
@@ -101,6 +110,7 @@ window.menuData = [
         "tags": [
           "عاشقان کارامل"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -109,6 +119,7 @@ window.menuData = [
         "tags": [
           "اصیل"
         ],
+        "available": true,
         "image": "",
         "subtitle": "نسبت مساوی اسپرسو و شیر گرم"
       },
@@ -119,6 +130,7 @@ window.menuData = [
         "tags": [
           "کلاسیک"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -128,6 +140,7 @@ window.menuData = [
         "tags": [
           "اصیل"
         ],
+        "available": true,
         "image": "images/EspressoVIP.jpg"
       }
     ]
@@ -142,6 +155,7 @@ window.menuData = [
         "tags": [
           "طعمی خاص"
         ],
+        "available": true,
         "image": "",
         "subtitle": "شیر، پودر پسته و زعفران"
       },
@@ -151,6 +165,7 @@ window.menuData = [
         "tags": [
           "خوراک زمستان"
         ],
+        "available": true,
         "image": "images/HotChocalate.jpeg",
         "subtitle": "شیر، پودر هات چاکلت"
       },
@@ -160,6 +175,7 @@ window.menuData = [
         "tags": [
           "طعمی از دل فندق"
         ],
+        "available": true,
         "image": "images/HotChocalate.jpeg",
         "subtitle": "شیر، پودر هات چاکلت فندقی، فندق"
       },
@@ -169,6 +185,7 @@ window.menuData = [
         "tags": [
           "کلاسیک"
         ],
+        "available": true,
         "image": "images/Shir.jpeg",
         "subtitle": "شیر، پودر وایت چاکلت"
       },
@@ -178,6 +195,7 @@ window.menuData = [
         "tags": [
           "ادویه‌ای"
         ],
+        "available": true,
         "image": "",
         "subtitle": "شیر، پودر ماسالا"
       },
@@ -186,6 +204,7 @@ window.menuData = [
         "price": "250،000",
         "image": "",
         "subtitle": "شیر، پودر نسکافه",
+        "available": true,
         "tags": [
           "کلاسیک"
         ]
@@ -195,6 +214,7 @@ window.menuData = [
         "price": "250،000",
         "image": "",
         "subtitle": "شیر، پودر کاکائو، شکر",
+        "available": true,
         "tags": [
           "سنتی"
         ]
@@ -205,6 +225,7 @@ window.menuData = [
         "tags": [
           "آرامش‌بخش"
         ],
+        "available": true,
         "image": "images/Shir.jpeg",
         "subtitle": "شیر، عسل، دارچین، زعفران"
       },
@@ -214,6 +235,7 @@ window.menuData = [
         "tags": [
           "ادویه‌ای سنتی"
         ],
+        "available": true,
         "image": "",
         "subtitle": "شیر، پودر کرک"
       }
@@ -229,6 +251,7 @@ window.menuData = [
         "tags": [
           "خنک و کلاسیک"
         ],
+        "available": true,
         "image": "images/Icelatte.jpeg",
         "subtitle": "ترکیب کلاسیک اسپرسو، یخ"
       },
@@ -238,6 +261,7 @@ window.menuData = [
         "tags": [
           "خنک و محبوب"
         ],
+        "available": true,
         "image": "",
         "subtitle": "شیر، اسپرسو و سیروپ کارامل، یخ"
       },
@@ -247,6 +271,7 @@ window.menuData = [
         "tags": [
           "خنک و شکلاتی"
         ],
+        "available": true,
         "image": "",
         "subtitle": "اسپرسو، شیرو سیروپ شکلات، یخ"
       },
@@ -256,6 +281,7 @@ window.menuData = [
         "tags": [
           "خنک و تلخ"
         ],
+        "available": true,
         "image": "",
         "subtitle": "اسپرسو به همراه یخ "
       },
@@ -265,6 +291,7 @@ window.menuData = [
         "tags": [
           "خنک و طعم خاص"
         ],
+        "available": true,
         "image": "",
         "subtitle": "اسپرسو به همراه یخ"
       },
@@ -274,6 +301,7 @@ window.menuData = [
         "tags": [
           "خنک و تازه"
         ],
+        "available": true,
         "image": "",
         "subtitle": "آب سودا لیمویی، لیمو، نعنا، سیروپ موهیتو، سیروپ نعنا، یخ"
       },
@@ -283,6 +311,7 @@ window.menuData = [
         "tags": [
           "خنک و تازه"
         ],
+        "available": true,
         "image": "",
         "subtitle": ""
       },
@@ -293,6 +322,7 @@ window.menuData = [
         "tags": [
           "کلاسیک"
         ],
+        "available": true,
         "image": "images/Abjo.jpeg"
       },
       {
@@ -302,6 +332,7 @@ window.menuData = [
         "tags": [
           "مخصوص گرما"
         ],
+        "available": true,
         "image": "images/SharbatAblimo.jpg"
       },
       {
@@ -311,6 +342,7 @@ window.menuData = [
         "tags": [
           "مخصوص گرما"
         ],
+        "available": true,
         "image": "images/SharbatGolMoham.jpg"
       }
     ]
@@ -326,6 +358,7 @@ window.menuData = [
         "tags": [
           "طعمی صورتی"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -335,6 +368,7 @@ window.menuData = [
         "tags": [
           "کلاسیک"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -344,6 +378,7 @@ window.menuData = [
         "tags": [
           "طعمی شکلاتی"
         ],
+        "available": true,
         "image": "images/ShakeMozChocalate.jpeg"
       },
       {
@@ -353,6 +388,7 @@ window.menuData = [
         "tags": [
           "شکلاتی"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -362,6 +398,7 @@ window.menuData = [
         "tags": [
           "شکلاتی"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -371,6 +408,7 @@ window.menuData = [
         "tags": [
           "تلخ شیرین"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -380,6 +418,7 @@ window.menuData = [
         "tags": [
           "طعمی خاص"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -389,6 +428,7 @@ window.menuData = [
         "tags": [
           "شکلاتی"
         ],
+        "available": true,
         "image": ""
       },
       {
@@ -398,6 +438,7 @@ window.menuData = [
         "tags": [
           "طعمی خاص و کلاسیک"
         ],
+        "available": true,
         "image": "images/CafeGelasse.jpeg"
       }
     ]
@@ -411,6 +452,7 @@ window.menuData = [
         "price": "250،000",
         "image": "",
         "subtitle": "پونه + آویشن + عناب + چای کوهی + برگ سبز",
+        "available": true,
         "tags": [
           "آرامش بخش"
         ]
@@ -420,6 +462,7 @@ window.menuData = [
         "price": "250،000",
         "image": "",
         "subtitle": "گل گاوزبان، گل محمدی، بهارنارنج، لیمو",
+        "available": true,
         "tags": [
           "آرامش بخش"
         ]
@@ -430,6 +473,7 @@ window.menuData = [
         "tags": [
           "مقوی"
         ],
+        "available": true,
         "image": "",
         "subtitle": "سیب + هل + دارچین + زعفران + عسل"
       },
@@ -439,6 +483,7 @@ window.menuData = [
         "tags": [
           "طعمی خاص و تند"
         ],
+        "available": true,
         "image": "",
         "subtitle": "چای سبز + زنجبیل + دارچین + گل محمدی"
       },
@@ -447,6 +492,7 @@ window.menuData = [
         "price": "250،000",
         "image": "",
         "subtitle": "اسطوخودوس + بابونه + به لیمو + گل محمدی",
+        "available": true,
         "tags": [
           "آرامش بخش"
         ]
@@ -458,6 +504,7 @@ window.menuData = [
         "tags": [
           "کلاسیک"
         ],
+        "available": true,
         "image": ""
       }
     ]
@@ -473,6 +520,7 @@ window.menuData = [
         "tags": [
           "سنتی"
         ],
+        "available": true,
         "image": "images/Tea.jpeg"
       },
       {
@@ -482,6 +530,7 @@ window.menuData = [
         "tags": [
           "معطر"
         ],
+        "available": true,
         "image": "images/Tea.jpeg"
       },
       {
@@ -491,6 +540,7 @@ window.menuData = [
         "tags": [
           "آرامش بخش"
         ],
+        "available": true,
         "image": "images/Tea.jpeg"
       },
       {
@@ -500,6 +550,7 @@ window.menuData = [
         "tags": [
           "طعمی گرم و مقوی"
         ],
+        "available": true,
         "image": "images/Tea.jpeg"
       }
     ]
@@ -513,6 +564,7 @@ window.menuData = [
         "price": "50،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/bgerdu.jpg"
       },
       {
@@ -520,6 +572,7 @@ window.menuData = [
         "price": "55،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/bpesteh.jpg"
       },
       {
@@ -527,6 +580,7 @@ window.menuData = [
         "price": "55،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Bnescafe.jpg"
       },
       {
@@ -534,6 +588,7 @@ window.menuData = [
         "price": "55،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/bgerdu.jpg"
       },
       {
@@ -541,6 +596,7 @@ window.menuData = [
         "price": "300،000",
         "subtitle": "همراه با بستنی هم سرو می شود",
         "tags": [],
+        "available": true,
         "image": ""
       }
     ]
@@ -554,6 +610,7 @@ window.menuData = [
         "price": "180،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/CakeShokolati.jpeg"
       },
       {
@@ -561,6 +618,7 @@ window.menuData = [
         "price": "300،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Tiramisu.jpg"
       },
       {
@@ -568,6 +626,7 @@ window.menuData = [
         "price": "300،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Seshir.jpg"
       },
       {
@@ -575,6 +634,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "انتخابی طعم های سیب و دارچین، پروتئینی، کره بادام زمینی، دابل چاکلت، نوتلا، گردو شکلاتی",
         "tags": [],
+        "available": true,
         "image": "images/Cookie.jpg"
       }
     ]
@@ -588,6 +648,7 @@ window.menuData = [
         "price": "180،000",
         "subtitle": "نان تست، پنیر رژیمی، مغز گردو",
         "tags": [],
+        "available": true,
         "image": ""
       },
       {
@@ -595,6 +656,7 @@ window.menuData = [
         "price": "280،000",
         "subtitle": "نان تست پروتئینی، کره بادام زمینی، موز، پودر دارچین",
         "tags": [],
+        "available": true,
         "image": ""
       },
       {
@@ -602,6 +664,7 @@ window.menuData = [
         "price": "350،000",
         "subtitle": "جو دوسر صبحانه ای، موز، همراه با شیر یا آب، مغز گردو، مویز، کره بادام زمینی، پودر دارچین",
         "tags": [],
+        "available": true,
         "image": ""
       }
     ]
@@ -615,6 +678,7 @@ window.menuData = [
         "price": "20،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": ""
       },
       {
@@ -622,6 +686,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Hrejimi.jpg"
       },
       {
@@ -629,6 +694,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Hlemon.jpg"
       },
       {
@@ -636,6 +702,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/hb.jpg"
       },
       {
@@ -643,6 +710,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Hmixberry.jpg"
       },
       {
@@ -650,6 +718,7 @@ window.menuData = [
         "price": "120،000",
         "subtitle": "",
         "tags": [],
+        "available": true,
         "image": "images/Hmeshki.jpg"
       }
     ]
