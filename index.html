@@ -6,7 +6,9 @@
     <title>منوی کافه متانویا</title>
     <meta name="description" content="منوی دیجیتال کافه متانویا— اسپرسو، نوشیدنی گرم و سرد، دمنوش و چای">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="icon" id="app-favicon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" id="app-apple-icon" href="icon.svg">
+    <meta name="theme-color" id="app-theme-color" content="#1E1E1E">
     <meta name="theme-color" content="#1E1E1E">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="products.js"></script>
+    <script src="brand.js"></script>
 </head>
 <body>
     <div class="container">
@@ -22,7 +25,8 @@
             <button class="header-btn" id="theme-btn">🌙 حالت تاریک</button>
         </div>
         <header>
-            <img src="icon.svg" class="coffee-bean-icon" alt="دانه قهوه" width="64" height="64">
+            <img id="brand-logo" src="icon.svg" class="coffee-bean-icon" 
+     alt="لوگو" width="64" height="64" loading="eager" fetchpriority="high">
             <h1>کافه متانویا</h1>
             <p>نوری در دل تاریکی</p>
         </header>
@@ -478,7 +482,60 @@ window.activateMap = function (btn) {
     toggle();
 })();
 
+    const Branding = (function() {
+    const FALLBACK = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">' +
+        '<circle cx="32" cy="32" r="30" fill="%231E1E1E"/>' +
+        '<text x="32" y="42" font-size="28" text-anchor="middle" fill="%23E6DDD1">M</text></svg>'
+    );
+
+    function guessMime(path) {
+        const p = String(path).toLowerCase();
+        if (p.endsWith('.svg')) return 'image/svg+xml';
+        if (p.endsWith('.png')) return 'image/png';
+        if (p.endsWith('.webp')) return 'image/webp';
+        if (p.endsWith('.jpg') || p.endsWith('.jpeg')) return 'image/jpeg';
+        return 'image/png';
+    }
+
+    function apply() {
+        const b = window.cafeBrand || {};
+        const logo = String(b.logo || '').trim() || FALLBACK;
+
+        // لوگوی هدر
+        const img = document.getElementById('brand-logo');
+        if (img) {
+            img.onerror = () => { img.onerror = null; img.src = FALLBACK; };
+            img.src = logo;
+            img.alt = b.logoAlt || b.name || 'لوگو';
+            if (b.logoWidth) img.width = b.logoWidth;
+            if (b.logoHeight) img.height = b.logoHeight;
+        }
+
+        // favicon
+        const favicon = document.getElementById('app-favicon');
+        if (favicon) {
+            const src = b.favicon || logo;
+            favicon.setAttribute('href', src);
+            favicon.setAttribute('type', guessMime(src));
+        }
+
+        // آیکون iOS
+        const apple = document.getElementById('app-apple-icon');
+        if (apple) apple.setAttribute('href', b.appleTouchIcon || logo);
+
+        // رنگ تم
+        const theme = document.getElementById('app-theme-color');
+        if (theme && b.themeColor) theme.setAttribute('content', b.themeColor);
+
+        // عنوان
+        if (b.name) document.title = 'منوی ' + b.name;
+    }
+
+    return { apply };
+})();
         function updateUI() { 
+            Branding.apply(); // ← این خط را اضافه کن
             renderFilters(); 
             renderMenu(); 
             renderInfo(); 
