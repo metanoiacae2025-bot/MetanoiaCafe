@@ -559,6 +559,11 @@ function renderQRCode(attempt) {
         });
         const g = host.querySelector('img, canvas');
         if (g) g.setAttribute('alt', 'کد QR منوی کافه متانویا');
+        const nodes = host.querySelectorAll('img, canvas');
+        if (nodes.length > 1) {
+            const keep = host.querySelector('img[src]') || nodes[0];
+            nodes.forEach(el => { if (el !== keep) el.style.display = 'none'; });
+        }
     } catch (err) {
         console.error('خطا در ساخت کد QR:', err);
         host.innerHTML = `<a class="qr-fallback" href="${url}" target="_blank"
