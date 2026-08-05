@@ -632,3 +632,136 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
     .back-to-top, .slider-btn, .slider-dots, .qr-box { display: none !important; }
     .product-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
 }
+/* ===== برچسب‌های محصول ===== */
+.product-image-wrapper {
+    position: relative;
+    overflow: visible;
+}
+
+.product-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 2;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease;
+}
+
+.product-card:hover .product-badge {
+    transform: scale(1.05);
+}
+
+/* انواع برچسب */
+.badge-default,
+.badge-popular {
+    background: linear-gradient(135deg, #D4AF37 0%, #F4E4B5 100%);
+    color: #1E1E1E;
+}
+
+.badge-new {
+    background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+    color: white;
+}
+
+.badge-chef {
+    background: linear-gradient(135deg, #E53935 0%, #EF5350 100%);
+    color: white;
+}
+
+.badge-limited {
+    background: linear-gradient(135deg, #673AB7 0%, #9575CD 100%);
+    color: white;
+}
+
+/* ===== حالت ناموجود ===== */
+.product-unavailable {
+    opacity: 0.65;
+}
+
+.product-unavailable .product-image-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 30, 30, 0.15);
+    backdrop-filter: blur(1px);
+    z-index: 1;
+}
+
+.unavailable-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.88);
+    color: #E6DDD1;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    z-index: 3;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.product-unavailable .product-name,
+.product-unavailable .product-subtitle,
+.product-unavailable .product-price {
+    color: #999;
+}
+
+/* ===== دکمهٔ بازگشت به بالا ===== */
+.scroll-top-btn {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #1E1E1E 0%, #3A3A3A 100%);
+    color: #E6DDD1;
+    border: 2px solid rgba(230, 221, 209, 0.15);
+    border-radius: 50%;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.scroll-top-btn:hover {
+    background: linear-gradient(135deg, #2A2A2A 0%, #4A4A4A 100%);
+    border-color: rgba(230, 221, 209, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.scroll-top-btn:active {
+    transform: translateY(-2px) scale(0.96);
+}
+
+@media (max-width: 768px) {
+    .scroll-top-btn {
+        bottom: 20px;
+        left: 20px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.4rem;
+    }
+}
