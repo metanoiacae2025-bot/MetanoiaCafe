@@ -557,20 +557,10 @@ function renderQRCode(attempt) {
             colorLight: '#ffffff',
             correctLevel: QRCode.CorrectLevel.M
         });
-        /* تضمین نمایش تنها یک عنصر گرافیکی: تصویر نهایی در اولویت است */
-        const qrImg = host.querySelector('img');
-        const qrCanvas = host.querySelector('canvas');
-
-        if (qrImg && qrImg.getAttribute('src')) {
-            qrImg.style.display = 'block';
-            qrImg.setAttribute('alt', 'کد QR منوی کافه متانویا');
-            if (qrCanvas) qrCanvas.style.display = 'none';
-        } else if (qrCanvas) {
-            /* اگر تصویر ساخته نشد، فقط بوم رسم را نشان بده */
-            qrCanvas.style.display = 'block';
-            qrCanvas.style.margin = '0 auto';
-            qrCanvas.setAttribute('aria-label', 'کد QR منوی کافه متانویا');
-            if (qrImg) qrImg.style.display = 'none';
+        const nodes = host.querySelectorAll('img, canvas');
+        if (nodes.length > 1) {
+            const keep = host.querySelector('img[src]') || nodes[0];
+            nodes.forEach(el => { if (el !== keep) el.style.display = 'none'; });
         } catch (err) {
         console.error('خطا در ساخت کد QR:', err);
         host.innerHTML = `<a class="qr-fallback" href="${url}" target="_blank"
