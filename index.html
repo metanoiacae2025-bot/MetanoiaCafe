@@ -372,6 +372,13 @@ function renderInfo() {
         ${geoUrl ? `<a class="map-chip" href="${geoUrl}">اپ نقشه گوشی</a>` : ''}
     </div>` : '';
 
+        /* ---------- بلوک QR (بازگردانی‌شده) ---------- */
+    const qrBlock = `
+    <div class="qr-box">
+        <p>برای باز کردن منو، این کد را اسکن کنید</p>
+        <div id="qrcode" role="img" aria-label="کد QR منوی کافه متانویا"></div>
+    </div>`;
+    
     box.innerHTML = `
         <h3>${c.name || 'اطلاعات کافه'}</h3>
         ${slider}
@@ -382,9 +389,11 @@ function renderInfo() {
         <a class="map-cta" href="${gmapUrl}" target="_blank" rel="noopener noreferrer">
             🧭 مسیریابی تا کافه
         </a>` : ''}
+        ${qrBlock}
     `;
 
     if (n) CafeSlider.init('#cafe-slider');
+    renderQRCode();
 }
 
 /* محافظ سازگاری اسلایدر: تطبیق با تعداد دلخواه تصاویر (فاز ۳ کامل نشده) */
@@ -512,6 +521,50 @@ window.activateMap = function (btn) {
     wrap.innerHTML = '';
     wrap.appendChild(iframe);
 };
+   /**
+ * ساخت کد QR در عنصر #qrcode
+ * @param {Number} attempt شمارندهٔ تلاش مجدد وقتی کتابخانه هنوز لود نشده
+ */
+function renderQRCode(attempt) {
+    const host = document.getElementById('qrcode');
+    if (!host) return; // مقصد وجود ندارد، بی‌صدا خروج
+
+    const c = window.cafeInfo || {};
+    const fallbackUrl = 'https://metanoiacae2025-bot.github.io/MetanoiaCafe/';
+
+    let url = (c.menuUrl && String(c.menuUrl).trim())
+        ? String(c.menuUrl).trim()
+        : (window.location.protocol === 'file:' ? fallbackUrl : window.location.href);
+
+    url = url.split('#')[0]; // حذف هش برای اسکن تمیزتر
+
+    // کتابخانهٔ CDN هنوز نرسیده: حداکثر ۱۰ تلاش با فاصلهٔ ۴۰۰ میلی‌ثانیه
+    if (typeof QRCode === 'undefined') {
+        const n = attempt || 0;
+        if (n < 10) { setTimeout(() => renderQRCode(n + 1), 400); return; }
+        host.innerHTML = `<a class="qr-fallback" href="${url}" target="_blank"
+                             rel="noopener noreferrer" dir="ltr">${url}</a>`;
+        return;
+    }
+
+    try {
+        host.innerHTML = ''; // جلوگیری از QR تکراری در رندر مجدد
+        new QRCode(host, {
+            text: url,
+            width: 130,
+            height: 130,
+            colorDark: '#1E1E1E',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+        });
+        const g = host.querySelector('img, canvas');
+        if (g) g.setAttribute('alt', 'کد QR منوی کافه متانویا');
+    } catch (err) {
+        console.error('خطا در ساخت کد QR:', err);
+        host.innerHTML = `<a class="qr-fallback" href="${url}" target="_blank"
+                             rel="noopener noreferrer" dir="ltr">${url}</a>`;
+    }
+}     
 
 /* ===================== فاز ۵ — دکمه بازگشت به بالا ===================== */
 (function () {
