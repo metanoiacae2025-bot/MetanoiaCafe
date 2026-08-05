@@ -675,6 +675,9 @@ window.cafeInfo = {
     hours: "هر روز، 07:00 تا 21:00",
     wifi: "",
 
+      // آدرس نهایی منو — مبنای ساخت کد QR (مستقل از آدرس مرورگر)
+    menuUrl: "https://metanoiacae2025-bot.github.io/MetanoiaCafe/",
+
     // تصاویر اسلایدر (تعداد آزاد)
     images: [
         "images/Shop1.jpg",
