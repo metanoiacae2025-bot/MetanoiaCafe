@@ -691,13 +691,26 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
     .price-val { font-size: .76rem; }
     .product-card.is-unavailable .product-thumb-wrap::after { font-size: .66rem; }
 }
-/* --- تکمیل QR --- */
-.qr-box #qrcode img,
-.qr-box #qrcode canvas {
+/* --- تکمیل QR (اصلاح‌شده: حذف نمایش دوگانه) --- */
+.qr-box #qrcode img {
+    display: block;
     width: 130px;
     height: 130px;
-    vertical-align: middle;
+    margin: 0 auto;
+    vertical-align: middle; /* حذف نوار سفید زیر تصویر */
 }
+
+/* بوم رسم فقط منبع تولید تصویر است و نباید دیده شود */
+.qr-box #qrcode canvas {
+    display: none !important;
+}
+
+/* پشتیبانی از حالت جدولی کتابخانه در مرورگرهای قدیمی */
+.qr-box #qrcode table {
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
 .qr-fallback {
     font-size: .72rem;
     color: var(--text-muted);
