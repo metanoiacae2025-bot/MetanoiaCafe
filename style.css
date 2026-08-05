@@ -691,3 +691,16 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
     .price-val { font-size: .76rem; }
     .product-card.is-unavailable .product-thumb-wrap::after { font-size: .66rem; }
 }
+/* --- تکمیل QR --- */
+.qr-box #qrcode img,
+.qr-box #qrcode canvas {
+    display: block;
+    width: 130px;
+    height: 130px;
+}
+.qr-fallback {
+    font-size: .72rem;
+    color: var(--text-muted);
+    word-break: break-all;
+    text-decoration: none;
+}
