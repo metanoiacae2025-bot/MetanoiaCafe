@@ -10,6 +10,7 @@ window.menuData = [
         "tags": [
           "فول کافئین"
         ],
+        "available": false,
         "image": "images/EspressoVIP.jpg"
       },
       {
