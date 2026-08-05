@@ -107,45 +107,84 @@ const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent(
     '<text x="60" y="66" font-size="34" text-anchor="middle" fill="%236B6B6B">☕</text></svg>'
 );
 
+/* ---------- ابزار کمکی: امن‌سازی متن برای HTML ---------- */
+function escHTML(v) {
+    return String(v == null ? '' : v)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 /**
- * ساخت کارت عمودی محصول (فاز ۱)
+ * ساخت بلوک قیمت (تک‌قیمتی + چندقیمتی + ناموجود)
+ * @param {Object} p محصول
+ * @param {Boolean} isOut ناموجود بودن
+ */
+function buildPriceBlock(p, isOut) {
+    if (isOut) return '<span class="price-na">موقتاً ناموجود</span>';
+
+    const list = Array.isArray(p.prices)
+        ? p.prices.filter(v => v && String(v.price || '').trim())
+        : [];
+
+    // حالت چندقیمتی
+    if (list.length > 1 || (list.length === 1 && String(list[0].label || '').trim())) {
+        return '<div class="price-list">' + list.map(v => {
+            const lbl = String(v.label || '').trim();
+            return '<span class="price-row">'
+                 + (lbl ? `<span class="price-label">${escHTML(lbl)}</span>` : '')
+                 + `<span class="price-val">${toPersianDigits(v.price)} <span class="currency">تومان</span></span>`
+                 + '</span>';
+        }).join('') + '</div>';
+    }
+
+    // حالت تک‌قیمتی (چه از prices، چه از price قدیمی)
+    const single = list.length === 1 ? list[0].price : p.price;
+    return single && String(single).trim()
+        ? `${toPersianDigits(single)} <span class="currency">تومان</span>`
+        : '<span class="price-na">ناموجود</span>';
+}
+
+/**
+ * ساخت کارت عمودی محصول (فاز ۱ + وضعیت موجودی + چندقیمتی)
  * @param {Object} p محصول
  * @param {Number} i اندیس برای انیمیشن پله‌ای
  */
 function buildProductCard(p, i) {
     const img = p.image && p.image.trim() ? p.image : FALLBACK_IMG;
+    const isOut = p.available === false;
+
     const sub = p.subtitle && p.subtitle.trim()
-        ? `<p class="product-sub">${p.subtitle}</p>` : '';
+        ? `<p class="product-sub">${escHTML(p.subtitle)}</p>` : '';
 
     const tags = Array.isArray(p.tags) && p.tags.length
         ? `<div class="product-tags">` +
-          p.tags.filter(Boolean).map(t => `<span class="product-tag">${t}</span>`).join('') +
+          p.tags.filter(Boolean).map(t => `<span class="product-tag">${escHTML(t)}</span>`).join('') +
           `</div>`
         : '';
 
-    const price = p.price && String(p.price).trim()
-        ? `${toPersianDigits(p.price)} <span class="currency">تومان</span>`
-        : '<span class="price-na">ناموجود</span>';
+    const price = buildPriceBlock(p, isOut);
+    const name = escHTML(p.name || '');
 
     return `
-    <article class="product-card" style="--delay:${Math.min(i, 12) * 35}ms" tabindex="0">
+    <article class="product-card${isOut ? ' is-unavailable' : ''}"
+             style="--delay:${Math.min(i, 12) * 35}ms" tabindex="0"
+             ${isOut ? 'aria-disabled="true"' : ''}>
         <div class="product-thumb-wrap">
-            <img class="product-thumb" src="${img}" alt="${p.name || 'محصول'}"
+            <img class="product-thumb" src="${escHTML(img)}" alt="${name || 'محصول'}"
                  loading="lazy" decoding="async"
                  onerror="this.onerror=null;this.src='${FALLBACK_IMG}';">
             ${tags}
         </div>
         <div class="product-body">
             <div class="product-main-row">
-                <h3 class="product-name" title="${p.name || ''}">${p.name || ''}</h3>
+                <h3 class="product-name" title="${name}">${name}</h3>
                 ${sub}
             </div>
             <div class="product-price">${price}</div>
         </div>
     </article>`;
 }
-
-
+        
 /**
  * ساخت بلوک یک دسته همراه بنر (فاز ۲)
  * @param {Object} cat دسته‌بندی
@@ -194,6 +233,7 @@ function renderMenu() {
         });
 
         if (items.length) {
+            items.sort((a, b) => (a.available === false) - (b.available === false));
             sections.push(buildCategoryBlock(cat, items));
         }
     });
