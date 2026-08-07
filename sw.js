@@ -1,6 +1,6 @@
 /* ===== Service Worker — کافه متانویا =====
    نسخه را در هر انتشار جدید بالا ببرید تا کش قدیمی پاک شود. */
-const VERSION = 'v1.11.8';
+const VERSION = 'v1.11.12';
 const STATIC_CACHE = `metanoia-static-${VERSION}`;
 const RUNTIME_CACHE = `metanoia-runtime-${VERSION}`;
 const IMAGE_CACHE = `metanoia-images-${VERSION}`;
@@ -11,6 +11,7 @@ const PRECACHE = [
     './index.html',
     './style.css',
     './products.js',
+    './brand.js',        // افزوده شد: اطلاعات برند و menuUrl برای ساخت QR
     './manifest.json',
     './icon.svg'
 ];
@@ -66,9 +67,15 @@ async function networkFirst(request, cacheName, timeoutMs = 4000) {
     } catch (err) {
         const cached = await cache.match(request, { ignoreSearch: false });
         if (cached) return cached;
+
+        // جست‌وجوی نسخهٔ پیش‌کش‌شده در کش استاتیک
+        const staticCache = await caches.open(STATIC_CACHE);
+        const staticHit = await staticCache.match(request);
+        if (staticHit) return staticHit;
+
         if (request.mode === 'navigate') {
             const fallback = await cache.match('./index.html') ||
-                             await (await caches.open(STATIC_CACHE)).match('./index.html');
+                             await staticCache.match('./index.html');
             if (fallback) return fallback;
         }
         throw err;
@@ -83,7 +90,13 @@ async function staleWhileRevalidate(request, cacheName) {
         if (res && (res.ok || res.type === 'opaque')) cache.put(request, res.clone());
         return res;
     }).catch(() => null);
-    return cached || network || Response.error();
+
+    if (cached) return cached;
+
+    // اصلاح: پیش‌تر Promise به‌صورت خام برگردانده می‌شد و در صورت شکست fetch،
+    // مقدار null به respondWith می‌رسید و درخواست با خطا می‌شکست.
+    const fresh = await network;
+    return fresh || Response.error();
 }
 
 // کش‌اول خالص: برای تصاویر
@@ -91,12 +104,18 @@ async function cacheFirst(request, cacheName, limit) {
     const cache = await caches.open(cacheName);
     const cached = await cache.match(request);
     if (cached) return cached;
-    const res = await fetch(request);
-    if (res && (res.ok || res.type === 'opaque')) {
-        await cache.put(request, res.clone());
-        if (limit) trimCache(cacheName, limit);
+
+    try {
+        const res = await fetch(request);
+        if (res && (res.ok || res.type === 'opaque')) {
+            await cache.put(request, res.clone());
+            if (limit) trimCache(cacheName, limit);
+        }
+        return res;
+    } catch (err) {
+        // اصلاح: جلوگیری از رد شدن Promise و ایجاد خطای کنسول در حالت آفلاین
+        return Response.error();
     }
-    return res;
 }
 
 /* ---------- مسیردهی درخواست‌ها ---------- */
@@ -113,8 +132,9 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // ۲) داده محصولات → شبکه‌اول (حساس به تغییر قیمت)
-    if (sameOrigin && url.pathname.endsWith('products.js')) {
+    // ۲) داده محصولات و برند → شبکه‌اول (حساس به تغییر قیمت و اطلاعات کافه)
+    if (sameOrigin && (url.pathname.endsWith('products.js') ||
+                       url.pathname.endsWith('brand.js'))) {
         event.respondWith(networkFirst(req, RUNTIME_CACHE, 3500));
         return;
     }

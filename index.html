@@ -375,7 +375,7 @@ function renderInfo() {
         /* ---------- بلوک QR (بازگردانی‌شده) ---------- */
     const qrBlock = `
     <div class="qr-box">
-        <p>برای باز کردن منو، این کد را اسکن کنید</p>
+        <p>ما را به دوستان خود معرفی کنید</p>
         <div id="qrcode" role="img" aria-label="کد QR منوی کافه متانویا"></div>
     </div>`;
     
@@ -521,13 +521,14 @@ window.activateMap = function (btn) {
     wrap.innerHTML = '';
     wrap.appendChild(iframe);
 };
-/* ===== تولید کد QR (نسخهٔ پایدار — تک‌خروجی) ===== */
+
+/* ===== تولید کد QR (نسخهٔ پایدار — تک‌خروجی و همگام) ===== */
 function renderQRCode(attempt) {
     const host = document.getElementById('qrcode');
     if (!host) return;
 
-    // اگر قبلاً با موفقیت ساخته شده، دوباره نساز (جلوگیری از QR تکراری)
-    if (host.dataset.qrDone === '1' && host.querySelector('img[src]')) return;
+    // اگر قبلاً با موفقیت ساخته شده، دوباره نساز
+    if (host.dataset.qrDone === '1' && host.firstElementChild) return;
 
     const c = window.cafeInfo || {};
     const fallbackUrl = 'https://metanoiacae2025-bot.github.io/MetanoiaCafe/';
@@ -538,41 +539,27 @@ function renderQRCode(attempt) {
 
     url = url.split('#')[0]; // حذف هش برای اسکن تمیزتر
 
-    // کتابخانهٔ CDN هنوز نرسیده: حداکثر ۱۰ تلاش با فاصلهٔ ۴۰۰ میلی‌ثانیه
-    if (typeof QRCode === 'undefined') {
-        const n = attempt || 0;
-        if (n < 10) { setTimeout(() => renderQRCode(n + 1), 400); return; }
+    // نمایش نشانی به‌صورت لینک، وقتی ساخت تصویر ممکن نیست
+    const showLink = () => {
+        host.classList.remove('qr-canvas-mode');
         host.innerHTML = '<a class="qr-fallback" href="' + url +
             '" target="_blank" rel="noopener noreferrer" dir="ltr">' + url + '</a>';
+        host.dataset.qrDone = '1';
+    };
+
+    // کتابخانهٔ CDN هنوز نرسیده: حداکثر ۱۵ تلاش با فاصلهٔ ۴۰۰ میلی‌ثانیه
+    if (typeof QRCode === 'undefined') {
+        const n = attempt || 0;
+        if (n < 15) { setTimeout(() => renderQRCode(n + 1), 400); return; }
+        showLink();
         return;
-    }
-
-    // یکسان‌سازی خروجی: فقط یک عنصر گرافیکی باقی بماند
-    function normalizeQR() {
-        const img = host.querySelector('img');
-        const canvas = host.querySelector('canvas');
-
-        if (img && img.getAttribute('src')) {
-            img.style.display = 'block';
-            img.style.margin = '0 auto';
-            img.setAttribute('alt', ''); // توضیح روی div والد است
-            if (canvas && canvas.parentNode) canvas.parentNode.removeChild(canvas);
-            host.dataset.qrDone = '1';
-            return true;
-        }
-        if (canvas) { // حالت جایگزین
-            canvas.style.display = 'block';
-            canvas.style.margin = '0 auto';
-            if (img && img.parentNode) img.parentNode.removeChild(img);
-            host.dataset.qrDone = '1';
-            return true;
-        }
-        return false;
     }
 
     try {
         host.innerHTML = '';
+        host.classList.remove('qr-canvas-mode');
         host.dataset.qrDone = '0';
+
         new QRCode(host, {
             text: url,
             width: 130,
@@ -581,15 +568,44 @@ function renderQRCode(attempt) {
             colorLight: '#ffffff',
             correctLevel: QRCode.CorrectLevel.M
         });
-        normalizeQR();
-        setTimeout(normalizeQR, 60);
-        setTimeout(normalizeQR, 350);
+
+        const canvas = host.querySelector('canvas');
+        const table  = host.querySelector('table'); // مسیر مرورگرهای بدون canvas
+
+        if (canvas) {
+            let dataUrl = '';
+            try { dataUrl = canvas.toDataURL('image/png'); } catch (e) { dataUrl = ''; }
+
+            host.innerHTML = ''; // جدا کردن عناصر داخلی کتابخانه (img و canvas)
+
+            if (dataUrl) {
+                const img = new Image(130, 130);
+                img.alt = '';            // توضیح روی div والد قرار دارد
+                img.decoding = 'sync';
+                img.src = dataUrl;
+                host.appendChild(img);
+            } else {
+                // مسیر جایگزین: خودِ بوم نمایش داده می‌شود
+                host.appendChild(canvas);
+                host.classList.add('qr-canvas-mode');
+            }
+
+            host.dataset.qrDone = '1';
+            return;
+        }
+
+        if (table) {                 // خروجی جدولی کتابخانه، همان‌جا می‌ماند
+            host.dataset.qrDone = '1';
+            return;
+        }
+
+        showLink();                  // هیچ خروجی گرافیکی تولید نشد
     } catch (err) {
         console.error('خطا در ساخت کد QR:', err);
-        host.innerHTML = '<a class="qr-fallback" href="' + url +
-            '" target="_blank" rel="noopener noreferrer" dir="ltr">' + url + '</a>';
+        showLink();
     }
 }
+
 
 /* ===================== فاز ۵ — دکمه بازگشت به بالا ===================== */
 (function () {

@@ -1,34 +1,53 @@
 :root {
-    --navy: #1F4E79;
-    --burnt-brown: #6B3A2A;
-    --bg: #EFE8DC;
+    /* --- پالت پایه: آبی نفتی / قهوه‌ای / سبز تیره --- */
+    --petrol: #14424E;   /* آبی نفتی */
+    --brown:  #6E4530;   /* قهوه‌ای */
+    --forest: #1E4736;   /* سبز تیره */
+
+    /* --- سطوح --- */
+    --bg: #EAE6DB;
     --card: #ffffff;
-    --primary: #1E1E1E;
-    --text: #1E1E1E;
-    --text-muted: #6B6B6B;
-    --price: #1E1E1E;
-    --border: #DCD3C7;
-    --shadow: rgba(0,0,0,0.06);
-    --badge-bg: #E6DDD1;
-    --badge-text: #1E1E1E;
-    --teal: var(--navy);
-    --pomegranate: var(--burnt-brown);
+    --primary: #16211F;
+    --text: #16211F;
+    --text-muted: #5F6B66;
+    --price: #6E4530;
+    --border: #D3CEC1;
+    --shadow: rgba(15, 40, 38, 0.08);
+    --badge-bg: #DFDCCE;
+    --badge-text: #1E3A31;
+
+    /* --- alias برای سازگاری با ادامهٔ فایل --- */
+    --navy: var(--petrol);
+    --burnt-brown: var(--brown);
+    --teal: var(--petrol);
+    --pomegranate: var(--brown);
+
     --radius-card: 16px;
     --radius-pill: 30px;
 }
+
+
 [data-theme="dark"] {
-    --bg: #121B24;
-    --card: #1F2A33;
-    --primary: #E8D6C0;
-    --text: #D4C5B3;
-    --text-muted: #8A9BA8;
-    --price: #D69A5C;
-    --border: #2A3B48;
-    --shadow: rgba(0,0,0,0.4);
-    --badge-bg: #2A3B48;
-    --badge-text: #D6B38C;
-    --teal: #3A7B8C;
-    --pomegranate: #B05A45;
+    --petrol: #2E7080;
+    --brown: #A6674A;
+    --forest: #3C7F62;
+
+    --bg: #0F1B1A;
+    --card: #17282A;
+    --primary: #E4D5C2;
+    --text: #D2C6B6;
+    --text-muted: #8A9A96;
+    --price: #D9A46B;
+    --border: #26393A;
+    --shadow: rgba(0, 0, 0, 0.45);
+    --badge-bg: #26393A;
+    --badge-text: #D8BC98;
+
+    /* اصلاح باگ: در نسخهٔ قبلی navy و burnt-brown در حالت تاریک بازنویسی نمی‌شدند */
+    --navy: var(--petrol);
+    --burnt-brown: var(--brown);
+    --teal: var(--petrol);
+    --pomegranate: var(--brown);
 }
 
 * { box-sizing: border-box; }
@@ -177,9 +196,8 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
 }
 .filter-btn:hover { transform: translateY(-2px); }
 .filter-btn.active {
-    background: linear-gradient(100deg, var(--navy), var(--burnt-brown));
-    color: #fff;
-    box-shadow: 0 6px 16px var(--shadow);
+    background: linear-gradient(100deg, var(--petrol) 0%, var(--forest) 55%, var(--brown) 100%);
+
 }
 .filter-icon { font-size: 1.2rem; margin-bottom: 2px; }
 .filter-label { font-weight: 500; }
@@ -536,9 +554,9 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
     font-family: inherit;
     color: var(--text);
     background:
-        radial-gradient(circle at 30% 30%, rgba(31, 78, 121, .10), transparent 60%),
-        radial-gradient(circle at 70% 70%, rgba(107, 58, 42, .10), transparent 60%),
-        var(--badge-bg);
+                radial-gradient(circle at 30% 30%, rgba(20, 66, 78, .12), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(110, 69, 48, .10), transparent 60%),
+        radial-gradient(circle at 50% 90%, rgba(30, 71, 54, .10), transparent 62%)
 }
 .map-placeholder:hover { filter: brightness(1.03); }
 .map-pin { font-size: 1.9rem; }
@@ -716,4 +734,10 @@ header p { margin: 0; opacity: 0.7; font-size: 0.95rem; font-weight: 300; }
     color: var(--text-muted);
     word-break: break-all;
     text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+}
+
+.qr-fallback:focus-visible {
+    outline: 2px solid var(--forest);
+    outline-offset: 2px;
 }
