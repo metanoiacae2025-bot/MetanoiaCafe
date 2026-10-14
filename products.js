@@ -609,7 +609,7 @@ window.menuData = [
         "name": "کیک اکسترا چاکلت",
         "price": "180،000",
         "subtitle": "",
-        "tags": [شکلاتی],
+        "tags": ["شکلاتی"],
         "available": true,
         "image": "images/CakeShokolati.jpeg"
       },
