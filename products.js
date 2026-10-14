@@ -607,7 +607,7 @@ window.menuData = [
     "products": [
       {
         "name": "کیک اکسترا چاکلت",
-        "price": "180،000",
+        "price": "250،000",
         "subtitle": "",
         "tags": ["شکلاتی"],
         "available": true,
@@ -631,7 +631,7 @@ window.menuData = [
       },
       {
         "name": "کوکی",
-        "price": "120،000",
+        "price": "150،000",
         "subtitle": "انتخابی طعم های سیب و دارچین، پروتئینی، کره بادام زمینی، دابل چاکلت، نوتلا، گردو شکلاتی",
         "tags": [],
         "available": true,
@@ -648,7 +648,7 @@ window.menuData = [
         "price": "180،000",
         "subtitle": "نان تست، پنیر رژیمی، مغز گردو",
         "tags": [],
-        "available": true,
+        "available": false,
         "image": ""
       },
       {
