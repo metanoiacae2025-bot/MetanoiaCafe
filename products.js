@@ -332,7 +332,7 @@ window.menuData = [
         "tags": [
           "مخصوص گرما"
         ],
-        "available": true,
+        "available": false,
         "image": "images/SharbatAblimo.jpg"
       },
       {
@@ -342,7 +342,7 @@ window.menuData = [
         "tags": [
           "مخصوص گرما"
         ],
-        "available": true,
+        "available": false,
         "image": "images/SharbatGolMoham.jpg"
       }
     ]
@@ -588,7 +588,7 @@ window.menuData = [
         "price": "55،000",
         "subtitle": "",
         "tags": [],
-        "available": true,
+        "available": false,
         "image": "images/bgerdu.jpg"
       },
       {
@@ -606,10 +606,10 @@ window.menuData = [
     "image": "",
     "products": [
       {
-        "name": "کیک شکلاتی",
+        "name": "کیک اکسترا چاکلت",
         "price": "180،000",
         "subtitle": "",
-        "tags": [],
+        "tags": [شکلاتی],
         "available": true,
         "image": "images/CakeShokolati.jpeg"
       },
@@ -618,7 +618,7 @@ window.menuData = [
         "price": "300،000",
         "subtitle": "",
         "tags": [],
-        "available": true,
+        "available": false,
         "image": "images/Tiramisu.jpg"
       },
       {
@@ -626,7 +626,7 @@ window.menuData = [
         "price": "300،000",
         "subtitle": "",
         "tags": [],
-        "available": true,
+        "available": false,
         "image": "images/Seshir.jpg"
       },
       {
