@@ -333,7 +333,7 @@ window.menuData = [
           "کلاسیک"
         ],
         "available": true,
-        "image": "images/Abjoo1.jpeg"
+        "image": "images/Abjoo1.jpg"
       },
       {
         "name": "شربت تخم شربتی و خاکشیر",
