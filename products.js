@@ -179,6 +179,16 @@ window.menuData = [
         "image": "images/HotChocalate.jpeg",
         "subtitle": "شیر، پودر هات چاکلت فندقی، فندق"
       },
+            {
+        "name": "هات چاکلت نعنایی",
+        "price": "250،000",
+        "tags": [
+          "طعمی از دل نعنا"
+        ],
+        "available": true,
+        "image": "images/HotChocalate.jpeg",
+        "subtitle": "شیر، پودر هات چاکلت نعنایی"
+      },
       {
         "name": "وایت چاکلت",
         "price": "250،000",
